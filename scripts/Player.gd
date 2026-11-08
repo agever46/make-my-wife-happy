@@ -14,6 +14,9 @@ extends CharacterBody2D
 @export_range(0.25, 1.0) var iso_y_scale: float = 0.5
 ## Optional node used for squash & stretch (e.g. the Sprite2D / Visual node).
 @export var visual: Node2D
+## Ground distance (screen px) covered by one full 4-frame walk cycle (two steps).
+## Smaller = feet move faster for the same speed. Tune until feet stop "skating".
+@export var walk_cycle_length: float = 104.0
 
 var _overshoot_velocity := Vector2.ZERO
 var _facing := 1.0 # the source art looks left; 1.0 = as drawn, -1.0 = mirrored
@@ -61,6 +64,8 @@ func _update_squash(delta: float) -> void:
 	var target_scale := Vector2(1.0 + 0.12 * t, 1.0 - 0.12 * t)
 	if absf(velocity.y) > absf(velocity.x):
 		target_scale = Vector2(1.0 - 0.08 * t, 1.0 + 0.08 * t)
+	if visual is AnimatedSprite2D:
+		target_scale = Vector2.ONE # frame animation already carries the motion
 	target_scale *= _base_scale
 	var s := Vector2(absf(visual.scale.x), visual.scale.y).lerp(target_scale, 1.0 - exp(-14.0 * delta))
 	visual.scale = Vector2(s.x * _facing, s.y)
@@ -70,7 +75,13 @@ func _update_squash(delta: float) -> void:
 		var wanted := &"walk" if moving else &"idle"
 		if sprite.animation != wanted:
 			sprite.play(wanted)
-		sprite.speed_scale = clampf(velocity.length() / max_speed, 0.5, 1.2) if moving else 1.0
+		if moving:
+			# Sync the feet to ground speed: frames/sec = 4 * speed / cycle length.
+			var fps := 4.0 * velocity.length() / walk_cycle_length
+			var base_fps := sprite.sprite_frames.get_animation_speed(&"walk")
+			sprite.speed_scale = fps / base_fps
+		else:
+			sprite.speed_scale = 1.0
 	# Walk bob: small hop synced to speed.
 	_bob_time += delta * (6.0 + 10.0 * t)
-	visual.position.y = -absf(sin(_bob_time)) * 3.0 * t
+	visual.position.y = 0.0 if visual is AnimatedSprite2D else -absf(sin(_bob_time)) * 3.0 * t
