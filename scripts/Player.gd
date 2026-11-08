@@ -46,6 +46,8 @@ func _physics_process(delta: float) -> void:
 func _ready() -> void:
 	if visual != null:
 		_base_scale = visual.scale
+		if visual is AnimatedSprite2D:
+			visual.play(&"idle")
 
 
 func _update_squash(delta: float) -> void:
@@ -62,6 +64,13 @@ func _update_squash(delta: float) -> void:
 	target_scale *= _base_scale
 	var s := Vector2(absf(visual.scale.x), visual.scale.y).lerp(target_scale, 1.0 - exp(-14.0 * delta))
 	visual.scale = Vector2(s.x * _facing, s.y)
+	if visual is AnimatedSprite2D:
+		var sprite := visual as AnimatedSprite2D
+		var moving := velocity.length() > 20.0
+		var wanted := &"walk" if moving else &"idle"
+		if sprite.animation != wanted:
+			sprite.play(wanted)
+		sprite.speed_scale = clampf(velocity.length() / max_speed, 0.5, 1.2) if moving else 1.0
 	# Walk bob: small hop synced to speed.
 	_bob_time += delta * (6.0 + 10.0 * t)
-	visual.position.y = -absf(sin(_bob_time)) * 6.0 * t
+	visual.position.y = -absf(sin(_bob_time)) * 3.0 * t

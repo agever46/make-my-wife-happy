@@ -6,4 +6,4 @@
 
 All code in this repo so far was written with Claude Code (AI-assisted). No generated art or audio yet.
 
-| `assets/characters/husband_front.png` | Gemini (image generation); background removed and resized with a Python script | 2026-11-08 | "Stylized 3D-cartoon character render in the style of Fortnite: a tired but lovable husband in his 30s, short messy brown hair, slight stubble, blue t-shirt, grey sweatpants, striped slippers. Slightly exaggerated proportions, smooth painterly shading, vibrant saturated colors, soft rim light, clean outline. Full body, standing pose, 3/4 top-down angle. Solid pure white background." |
+| `assets/characters/husband_walk.png` | Gemini (image generation, using husband_front as reference); background removed, 5 frames packed into a sheet (127x325 each) with a Python script | 2026-11-08 | "Using this exact character (same face, clothes, art style, proportions, same camera angle), draw 4 walking-cycle frames in a single row on a pure white background: left leg forward, legs together passing, right leg forward, legs together passing. Same size and same foot ground line in every frame." |

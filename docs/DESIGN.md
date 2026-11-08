@@ -15,4 +15,4 @@
 Quest system (random quests with patience timers), HUD, wife/sofa scene, debug console (`debug`).
 
 ## Art direction (decision)
-Painterly cartoon style (Fortnite-like), not pixel art. Texture filter is Linear. The husband is one front image, mirrored by velocity and animated in code (hop + squash/stretch). Back/side views can be added later.
+Painterly cartoon style (Fortnite-like), not pixel art. Texture filter is Linear. The husband uses a 5-frame front walk sheet (idle = frame 2, walk = 0,1,3,4), mirrored by velocity, plus small hop and squash/stretch. Back/side views can be added later.
