@@ -14,6 +14,8 @@ extends CharacterBody2D
 @export_range(0.25, 1.0) var iso_y_scale: float = 0.5
 ## Optional node used for squash & stretch (e.g. the Sprite2D / Visual node).
 @export var visual: Node2D
+## Optional Skeleton2D cut-out rig (scenes/PlayerRig.tscn). Used instead of `visual`.
+@export var rig: PlayerRig
 ## Forward lean (radians) at full speed, and side-to-side body sway per step. Fake a relaxed gait.
 @export var lean_amount: float = 0.09
 @export var sway_amount: float = 0.05
@@ -47,6 +49,9 @@ func _physics_process(delta: float) -> void:
 
 	velocity = smoothed + _overshoot_velocity * delta * rate
 	move_and_slide()
+	if rig != null:
+		rig.cycle_length = walk_cycle_length
+		rig.update_motion(velocity)
 	_update_squash(delta)
 
 

@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/Player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/PlayerRig.tscn" id="2_rig"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_feet"]
+radius = 12.0
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("rig")]
+script = ExtResource("1_player")
+rig = NodePath("Rig")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -12)
+shape = SubResource("CircleShape2D_feet")
+
+[node name="Rig" parent="." instance=ExtResource("2_rig")]
