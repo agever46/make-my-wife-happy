@@ -14,6 +14,9 @@ extends CharacterBody2D
 @export_range(0.25, 1.0) var iso_y_scale: float = 0.5
 ## Optional node used for squash & stretch (e.g. the Sprite2D / Visual node).
 @export var visual: Node2D
+## Forward lean (radians) at full speed, and side-to-side body sway per step. Fake a relaxed gait.
+@export var lean_amount: float = 0.09
+@export var sway_amount: float = 0.05
 ## Ground distance (screen px) covered by one full 4-frame walk cycle (two steps).
 ## Smaller = feet move faster for the same speed. Tune until feet stop "skating".
 @export var walk_cycle_length: float = 104.0
@@ -21,6 +24,7 @@ extends CharacterBody2D
 var _overshoot_velocity := Vector2.ZERO
 var _facing := 1.0 # the source art looks left; 1.0 = as drawn, -1.0 = mirrored
 var _bob_time := 0.0
+var _gait_phase := 0.0
 var _base_scale: Vector2
 
 
@@ -84,4 +88,9 @@ func _update_squash(delta: float) -> void:
 			sprite.speed_scale = 1.0
 	# Walk bob: small hop synced to speed.
 	_bob_time += delta * (6.0 + 10.0 * t)
+	# Gait: lean into the move direction and rock side to side with each step.
+	var horizontal := clampf(velocity.x / max_speed, -1.0, 1.0)
+	_gait_phase += TAU * velocity.length() / walk_cycle_length * delta
+	visual.rotation = -_facing * absf(horizontal) * lean_amount \
+		+ sin(_gait_phase) * sway_amount * t
 	visual.position.y = 0.0 if visual is AnimatedSprite2D else -absf(sin(_bob_time)) * 3.0 * t
