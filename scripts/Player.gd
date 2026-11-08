@@ -16,6 +16,9 @@ extends CharacterBody2D
 @export var visual: Node2D
 
 var _overshoot_velocity := Vector2.ZERO
+var _facing := 1.0 # the source art looks left; 1.0 = as drawn, -1.0 = mirrored
+var _bob_time := 0.0
+var _base_scale: Vector2
 
 
 func _physics_process(delta: float) -> void:
@@ -40,11 +43,25 @@ func _physics_process(delta: float) -> void:
 	_update_squash(delta)
 
 
+func _ready() -> void:
+	if visual != null:
+		_base_scale = visual.scale
+
+
 func _update_squash(delta: float) -> void:
 	if visual == null:
 		return
+	if velocity.x > 8.0:
+		_facing = -1.0
+	elif velocity.x < -8.0:
+		_facing = 1.0
 	var t := clampf(velocity.length() / max_speed, 0.0, 1.0)
 	var target_scale := Vector2(1.0 + 0.12 * t, 1.0 - 0.12 * t)
 	if absf(velocity.y) > absf(velocity.x):
 		target_scale = Vector2(1.0 - 0.08 * t, 1.0 + 0.08 * t)
-	visual.scale = visual.scale.lerp(target_scale, 1.0 - exp(-14.0 * delta))
+	target_scale *= _base_scale
+	var s := Vector2(absf(visual.scale.x), visual.scale.y).lerp(target_scale, 1.0 - exp(-14.0 * delta))
+	visual.scale = Vector2(s.x * _facing, s.y)
+	# Walk bob: small hop synced to speed.
+	_bob_time += delta * (6.0 + 10.0 * t)
+	visual.position.y = -absf(sin(_bob_time)) * 6.0 * t
