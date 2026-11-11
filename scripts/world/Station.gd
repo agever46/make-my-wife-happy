@@ -58,7 +58,7 @@ func _draw() -> void:
 	if now - _focus_stamp < 120:
 		draw_rect(box.grow(3.0), Color.WHITE, false, 3.0)
 	var font := ThemeDB.fallback_font
-	var text_y := -size.y - title_gap
+	var text_y := -_visual_height() - title_gap
 	draw_string(font, Vector2(-80, text_y), title, HORIZONTAL_ALIGNMENT_CENTER, 160.0, 14)
 	if station_id != &"" and QuestManager.is_station_needed(station_id):
 		var bounce := sin(now / 150.0) * 4.0
@@ -81,3 +81,10 @@ func _draw_body(box: Rect2) -> void:
 func _draw_art(art: Texture2D) -> void:
 	var art_size := art.get_size() * texture_scale
 	draw_texture_rect(art, Rect2(-art_size.x * 0.5, -art_size.y, art_size.x, art_size.y), false)
+
+
+## Height of what is drawn (art if present, else the placeholder box). Labels sit above it.
+func _visual_height() -> float:
+	if texture != null:
+		return texture.get_size().y * texture_scale
+	return size.y

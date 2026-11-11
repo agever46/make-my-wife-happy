@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/Main.gd" id="2_main"]
@@ -6,6 +6,10 @@
 [ext_resource type="Script" path="res://scripts/world/Station.gd" id="4_station"]
 [ext_resource type="Script" path="res://scripts/world/Wife.gd" id="5_wife"]
 [ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="6_hud"]
+
+[ext_resource type="Texture2D" path="res://assets/characters/wife_neutral.png" id="7_wife_n"]
+[ext_resource type="Texture2D" path="res://assets/characters/wife_happy.png" id="8_wife_h"]
+[ext_resource type="Texture2D" path="res://assets/characters/wife_angry.png" id="9_wife_a"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("2_main")
@@ -21,12 +25,16 @@ y_sort_enabled = true
 position = Vector2(500, 430)
 
 [node name="Wife" type="StaticBody2D" parent="World"]
-position = Vector2(300, 330)
+position = Vector2(300, 350)
 script = ExtResource("5_wife")
 station_id = &"wife"
 title = "WIFE"
-size = Vector2(130, 60)
+size = Vector2(120, 70)
 color = Color(0.55, 0.35, 0.6, 1)
+texture = ExtResource("7_wife_n")
+texture_scale = 0.6
+texture_happy = ExtResource("8_wife_h")
+texture_angry = ExtResource("9_wife_a")
 
 [node name="TV" type="StaticBody2D" parent="World"]
 position = Vector2(300, 650)

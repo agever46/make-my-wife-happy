@@ -8,7 +8,7 @@ extends Station
 
 func _ready() -> void:
 	super._ready()
-	title_gap = 46.0
+	title_gap = 46.0 if texture == null else 8.0
 
 
 func _draw_body(box: Rect2) -> void:
