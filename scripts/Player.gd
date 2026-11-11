@@ -2,6 +2,14 @@ class_name Player
 extends CharacterBody2D
 ## Top-down / isometric player with bouncy, elastic movement.
 ## WASD / arrow keys, 8 directions. Diagonals are normalized by Input.get_vector.
+## Also handles interaction: hold `interact` at a station to work, tap it to pick up / drop an item.
+## Multiplayer-ready: every player has a player_id and reads its own "p<id>_*" input actions.
+
+@export var player_id: int = 1
+@export var interact_radius: float = 48.0
+@export var pickup_radius: float = 44.0
+## Where a carried item floats, relative to the feet.
+@export var carry_offset := Vector2(0, -162)
 
 @export var max_speed: float = 280.0
 ## Higher = snappier start. Lower = more "floaty".
@@ -28,12 +36,15 @@ var _facing := 1.0 # the source art looks left; 1.0 = as drawn, -1.0 = mirrored
 var _bob_time := 0.0
 var _gait_phase := 0.0
 var _base_scale: Vector2
+var _prefix := "p1_"
+
+var held_item: Item = null
 
 
 func _physics_process(delta: float) -> void:
 	var input_dir := Vector2.ZERO
 	if GameManager.is_playing():
-		input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+		input_dir = Input.get_vector(_prefix + "move_left", _prefix + "move_right", _prefix + "move_up", _prefix + "move_down")
 
 	var target := input_dir * Vector2(1.0, iso_y_scale) * max_speed
 	var rate := acceleration if input_dir != Vector2.ZERO else friction
@@ -52,10 +63,97 @@ func _physics_process(delta: float) -> void:
 	if rig != null:
 		rig.cycle_length = walk_cycle_length
 		rig.update_motion(velocity)
+	_update_interaction(delta)
 	_update_squash(delta)
 
 
+# --- Interaction -------------------------------------------------------------
+
+func held_item_id() -> StringName:
+	return held_item.item_id if is_instance_valid(held_item) else &""
+
+
+func give_item(item: Item) -> void:
+	if is_instance_valid(held_item):
+		drop_item()
+	if item.get_parent() != null:
+		item.reparent(self, false)
+	else:
+		add_child(item)
+	item.position = carry_offset
+	item.holder = self
+	held_item = item
+
+
+func drop_item() -> void:
+	if not is_instance_valid(held_item):
+		held_item = null
+		return
+	var item := held_item
+	held_item = null
+	item.holder = null
+	item.reparent(get_parent(), false)
+	item.position = position + Vector2(0, 8)
+
+
+func consume_item() -> void:
+	if is_instance_valid(held_item):
+		held_item.destroy()
+	held_item = null
+
+
+func _update_interaction(delta: float) -> void:
+	if not GameManager.is_playing():
+		return
+	var station := _nearest_station()
+	if station != null:
+		station.mark_focused()
+	var action := _prefix + "interact"
+	if station != null and Input.is_action_pressed(action):
+		var ratio := QuestManager.try_work(station, self, delta)
+		if ratio >= 0.0:
+			station.show_progress(ratio)
+			return
+	if Input.is_action_just_pressed(action):
+		if is_instance_valid(held_item):
+			drop_item()
+		else:
+			var item := _nearest_item()
+			if item != null:
+				give_item(item)
+
+
+func _nearest_station() -> Station:
+	var best: Station = null
+	var best_dist := interact_radius
+	for node in get_tree().get_nodes_in_group("stations"):
+		var station := node as Station
+		if station == null:
+			continue
+		var d := station.distance_to(global_position)
+		if d < best_dist:
+			best_dist = d
+			best = station
+	return best
+
+
+func _nearest_item() -> Item:
+	var best: Item = null
+	var best_dist := pickup_radius
+	for node in get_tree().get_nodes_in_group("items"):
+		var item := node as Item
+		if item == null or item.holder != null:
+			continue
+		var d := item.global_position.distance_to(global_position)
+		if d < best_dist:
+			best_dist = d
+			best = item
+	return best
+
+
 func _ready() -> void:
+	_prefix = "p%d_" % player_id
+	add_to_group("players")
 	if visual != null:
 		_base_scale = visual.scale
 		if visual is AnimatedSprite2D:

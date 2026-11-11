@@ -1,9 +1,8 @@
 extends Node2D
-## Alpha bootstrap scene: starts the game and prints GameManager signals for debugging.
+## Day 1 scene: starts the game and handles pause / restart keys.
 
 func _ready() -> void:
-	GameManager.happiness_changed.connect(func(n: float, _o: float) -> void: print("Wife-O-Meter: %.1f" % n))
-	GameManager.game_over.connect(func(score: int) -> void: print("GAME OVER. Score: %d" % score))
+	process_mode = Node.PROCESS_MODE_ALWAYS # so Esc can un-pause
 	GameManager.start_game()
 
 
