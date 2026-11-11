@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/Main.gd" id="2_main"]
@@ -17,12 +17,15 @@
 [ext_resource type="Texture2D" path="res://assets/props/dumpster.png" id="13_dumpster"]
 [ext_resource type="Texture2D" path="res://assets/props/tv.png" id="14_tv"]
 
+[ext_resource type="Texture2D" path="res://assets/tiles/floor_wood.png" id="15_floor"]
+
 [node name="Main" type="Node2D"]
 script = ExtResource("2_main")
 
 [node name="Room" type="Node2D" parent="."]
 z_index = -10
 script = ExtResource("3_room")
+floor_texture = ExtResource("15_floor")
 
 [node name="World" type="Node2D" parent="."]
 y_sort_enabled = true
