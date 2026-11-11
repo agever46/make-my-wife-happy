@@ -9,10 +9,15 @@ const WALL := 14.0
 const DOOR_TOP := 380.0
 const DOOR_BOTTOM := 480.0
 
+## Seamless tiles. When set they replace the flat placeholder colours.
+@export var floor_texture: Texture2D
+@export var grass_texture: Texture2D
+
 var _walls: Array[Rect2] = []
 
 
 func _ready() -> void:
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	var h := HOUSE
 	_walls = [
 		Rect2(h.position.x - WALL, h.position.y - WALL, h.size.x + WALL * 2.0, WALL), # top
@@ -43,8 +48,14 @@ func _add_collider(rect: Rect2) -> void:
 
 
 func _draw() -> void:
-	draw_rect(WORLD, Color(0.33, 0.55, 0.3)) # grass
+	if grass_texture != null:
+		draw_texture_rect(grass_texture, WORLD, true)
+	else:
+		draw_rect(WORLD, Color(0.33, 0.55, 0.3)) # grass
 	draw_rect(Rect2(HOUSE.end.x, DOOR_TOP, WORLD.end.x - HOUSE.end.x, DOOR_BOTTOM - DOOR_TOP), Color(0.6, 0.58, 0.52)) # path
-	draw_rect(HOUSE, Color(0.78, 0.62, 0.45)) # wooden floor
+	if floor_texture != null:
+		draw_texture_rect(floor_texture, HOUSE, true)
+	else:
+		draw_rect(HOUSE, Color(0.78, 0.62, 0.45)) # wooden floor
 	for wall in _walls:
 		draw_rect(wall, Color(0.25, 0.2, 0.25))

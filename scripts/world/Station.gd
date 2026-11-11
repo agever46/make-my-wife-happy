@@ -8,6 +8,9 @@ extends StaticBody2D
 @export var title: String = ""
 @export var size := Vector2(80, 60)
 @export var color := Color(0.6, 0.5, 0.4)
+## Real art. When set it replaces the placeholder box; drawn bottom-centre on the origin.
+@export var texture: Texture2D
+@export var texture_scale: float = 1.0
 
 ## Vertical gap between the box top and the title text.
 var title_gap := 8.0
@@ -68,5 +71,13 @@ func _draw() -> void:
 
 ## Override in subclasses for a custom look.
 func _draw_body(box: Rect2) -> void:
+	if texture != null:
+		_draw_art(texture)
+		return
 	draw_rect(box, color)
 	draw_rect(box, color.darkened(0.4), false, 2.0)
+
+
+func _draw_art(art: Texture2D) -> void:
+	var art_size := art.get_size() * texture_scale
+	draw_texture_rect(art, Rect2(-art_size.x * 0.5, -art_size.y, art_size.x, art_size.y), false)
