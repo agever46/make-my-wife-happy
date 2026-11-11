@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/Main.gd" id="2_main"]
@@ -10,6 +10,12 @@
 [ext_resource type="Texture2D" path="res://assets/characters/wife_neutral.png" id="7_wife_n"]
 [ext_resource type="Texture2D" path="res://assets/characters/wife_happy.png" id="8_wife_h"]
 [ext_resource type="Texture2D" path="res://assets/characters/wife_angry.png" id="9_wife_a"]
+
+[ext_resource type="Texture2D" path="res://assets/props/coffee_machine.png" id="10_coffee_machine"]
+[ext_resource type="Texture2D" path="res://assets/props/fridge.png" id="11_fridge"]
+[ext_resource type="Texture2D" path="res://assets/props/trash_can.png" id="12_trash_can"]
+[ext_resource type="Texture2D" path="res://assets/props/dumpster.png" id="13_dumpster"]
+[ext_resource type="Texture2D" path="res://assets/props/tv.png" id="14_tv"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("2_main")
@@ -40,40 +46,50 @@ texture_angry = ExtResource("9_wife_a")
 position = Vector2(300, 650)
 script = ExtResource("4_station")
 title = "TV"
-size = Vector2(110, 40)
+size = Vector2(65, 44)
 color = Color(0.15, 0.15, 0.2, 1)
+texture = ExtResource("14_tv")
+texture_scale = 0.5
 
 [node name="CoffeeMachine" type="StaticBody2D" parent="World"]
-position = Vector2(560, 215)
+position = Vector2(560, 270)
 script = ExtResource("4_station")
 station_id = &"coffee_machine"
 title = "COFFEE MACHINE"
-size = Vector2(70, 60)
+size = Vector2(61, 44)
 color = Color(0.35, 0.25, 0.2, 1)
+texture = ExtResource("10_coffee_machine")
+texture_scale = 0.5
 
 [node name="Fridge" type="StaticBody2D" parent="World"]
-position = Vector2(700, 215)
+position = Vector2(700, 270)
 script = ExtResource("4_station")
 station_id = &"fridge"
 title = "FRIDGE"
-size = Vector2(70, 90)
+size = Vector2(82, 44)
 color = Color(0.85, 0.9, 0.95, 1)
+texture = ExtResource("11_fridge")
+texture_scale = 0.5
 
 [node name="TrashCan" type="StaticBody2D" parent="World"]
 position = Vector2(790, 645)
 script = ExtResource("4_station")
 station_id = &"trash_can"
 title = "TRASH CAN"
-size = Vector2(46, 50)
+size = Vector2(40, 44)
 color = Color(0.4, 0.45, 0.4, 1)
+texture = ExtResource("12_trash_can")
+texture_scale = 0.5
 
 [node name="Dumpster" type="StaticBody2D" parent="World"]
 position = Vector2(1130, 630)
 script = ExtResource("4_station")
 station_id = &"dumpster"
 title = "DUMPSTER"
-size = Vector2(110, 70)
+size = Vector2(79, 44)
 color = Color(0.2, 0.4, 0.25, 1)
+texture = ExtResource("13_dumpster")
+texture_scale = 0.5
 
 [node name="HidingSpot1" type="Marker2D" parent="World" groups=["hiding_spots"]]
 position = Vector2(170, 620)

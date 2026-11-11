@@ -15,6 +15,7 @@ extends StaticBody2D
 ## Vertical gap between the box top and the title text.
 var title_gap := 8.0
 var _focus_stamp := -100000
+var _focused := false
 var _progress := 0.0
 var _progress_stamp := -100000
 
@@ -54,8 +55,9 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	var box := Rect2(-size.x * 0.5, -size.y, size.x, size.y)
 	var now := Time.get_ticks_msec()
+	_focused = now - _focus_stamp < 120
 	_draw_body(box)
-	if now - _focus_stamp < 120:
+	if _focused and _visual_height() == size.y: # placeholder box: white outline
 		draw_rect(box.grow(3.0), Color.WHITE, false, 3.0)
 	var font := ThemeDB.fallback_font
 	var text_y := -_visual_height() - title_gap
@@ -80,7 +82,9 @@ func _draw_body(box: Rect2) -> void:
 
 func _draw_art(art: Texture2D) -> void:
 	var art_size := art.get_size() * texture_scale
-	draw_texture_rect(art, Rect2(-art_size.x * 0.5, -art_size.y, art_size.x, art_size.y), false)
+	# Real art lights up when a player stands next to it.
+	var tint := Color(1.35, 1.35, 1.35) if _focused else Color.WHITE
+	draw_texture_rect(art, Rect2(-art_size.x * 0.5, -art_size.y, art_size.x, art_size.y), false, tint)
 
 
 ## Height of what is drawn (art if present, else the placeholder box). Labels sit above it.
