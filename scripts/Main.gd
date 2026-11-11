@@ -12,5 +12,5 @@ func _unhandled_input(event: InputEvent) -> void:
 			GameManager.pause_game()
 		elif GameManager.state == GameManager.GameState.PAUSED:
 			GameManager.resume_game()
-	elif event.is_action_pressed("ui_accept") and GameManager.state == GameManager.GameState.GAME_OVER:
+	elif event.is_action_pressed("ui_accept") and (GameManager.state == GameManager.GameState.GAME_OVER or GameManager.state == GameManager.GameState.VICTORY):
 		GameManager.start_game()

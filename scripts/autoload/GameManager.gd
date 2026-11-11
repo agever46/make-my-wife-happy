@@ -7,16 +7,25 @@ signal game_started
 signal game_paused
 signal game_resumed
 signal game_over(final_score: int)
+## The day timer ran out with the wife still above zero.
+signal day_won(stars: int, final_score: int)
+## Whole seconds left in the day; fires every tick.
+signal time_changed(seconds_left: int)
 signal state_changed(new_state: GameState, old_state: GameState)
 signal happiness_changed(new_value: float, old_value: float)
 signal money_changed(new_value: int, old_value: int)
 ## Fires every central tick while PLAYING (once per TICK_SECONDS). QuestManager can hook into this.
 signal tick(delta_seconds: float)
 
-enum GameState { MENU, PLAYING, PAUSED, GAME_OVER }
+enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, VICTORY }
 
 const MAX_HAPPINESS := 100.0
 const START_HAPPINESS := 60.0
+## Length of one day in seconds. Survive it to win.
+const DAY_LENGTH := 120.0
+## Wife-O-Meter needed at the end of the day for 2 / 3 stars (1 star for just surviving).
+const STARS_2_AT := 40.0
+const STARS_3_AT := 70.0
 const TICK_SECONDS := 1.0
 ## Happiness lost per second (can be raised over time for difficulty).
 const BASE_DECAY_PER_SECOND := 0.8
@@ -49,6 +58,7 @@ func start_game() -> void:
 	decay_per_second = BASE_DECAY_PER_SECOND
 	happiness_changed.emit(wife_happiness, wife_happiness)
 	money_changed.emit(money, money)
+	time_changed.emit(int(DAY_LENGTH))
 	_timer.start()
 	_set_state(GameState.PLAYING)
 	game_started.emit()
@@ -76,7 +86,32 @@ func end_game() -> void:
 	_timer.stop()
 	get_tree().paused = false
 	_set_state(GameState.GAME_OVER)
-	game_over.emit(int(elapsed_time) + money)
+	game_over.emit(final_score())
+
+
+func win_day() -> void:
+	if state != GameState.PLAYING:
+		return
+	_timer.stop()
+	var stars := stars_for(wife_happiness)
+	_set_state(GameState.VICTORY)
+	day_won.emit(stars, final_score())
+
+
+func stars_for(happiness: float) -> int:
+	if happiness >= STARS_3_AT:
+		return 3
+	if happiness >= STARS_2_AT:
+		return 2
+	return 1
+
+
+func final_score() -> int:
+	return money * 10 + int(wife_happiness)
+
+
+func time_left() -> int:
+	return maxi(0, int(ceil(DAY_LENGTH - elapsed_time)))
 
 
 func is_playing() -> bool:
@@ -122,8 +157,12 @@ func _on_tick() -> void:
 		return
 	elapsed_time += TICK_SECONDS
 	remove_happiness(decay_per_second * TICK_SECONDS)
-	if state == GameState.PLAYING: # decay may have ended the game
-		tick.emit(TICK_SECONDS)
+	if state != GameState.PLAYING: # decay may have ended the game
+		return
+	time_changed.emit(time_left())
+	tick.emit(TICK_SECONDS)
+	if elapsed_time >= DAY_LENGTH:
+		win_day()
 
 
 func _set_state(new_state: GameState) -> void:

@@ -27,5 +27,12 @@ coffee (machine -> fridge for milk -> wife), trash (trash can -> dumpster outsid
 - All look is placeholder drawn in code (`_draw`), so stations are invisible in the editor until real art replaces it.
 - UI text is English for now (Hebrew needs a font with Hebrew glyphs + RTL setup).
 
+## Day timer and victory
+- A day lasts `GameManager.DAY_LENGTH` (120 s). The HUD shows the clock (turns red in the last 15 s).
+- Survive the day with the Wife-O-Meter above 0: state VICTORY, signal `day_won(stars, score)`.
+- Stars by Wife-O-Meter at the end: 3 at 70+, 2 at 40+, otherwise 1. Score = money * 10 + happiness.
+- Dying at the very last tick still loses (decay is applied before the win check).
+- Enter restarts after game over or victory. There is no "next day" content yet: Enter replays day 1.
+
 ## Not done yet
-Real art for room/stations/wife, sounds, day timer / win condition, debug console, second player, upgrades shop.
+Sounds, debug console, second player, upgrades shop, more days/maps, walls/path art, Hebrew UI.

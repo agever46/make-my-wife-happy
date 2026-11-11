@@ -3,8 +3,10 @@ extends CanvasLayer
 
 var _meter: ProgressBar
 var _money: Label
+var _clock: Label
 var _tickets: VBoxContainer
 var _overlay: Label
+var _dim: ColorRect
 ## quest uid -> { "panel": PanelContainer, "hint": Label, "bar": ProgressBar, "quest": ActiveQuest }
 var _ticket_nodes := {}
 
@@ -25,12 +27,20 @@ func _ready() -> void:
 	top.add_child(_meter)
 	_money = Label.new()
 	top.add_child(_money)
+	_clock = Label.new()
+	top.add_child(_clock)
 
 	_tickets = VBoxContainer.new()
 	_tickets.position = Vector2(1000, 16)
 	_tickets.custom_minimum_size = Vector2(260, 0)
 	_tickets.add_theme_constant_override("separation", 8)
 	add_child(_tickets)
+
+	_dim = ColorRect.new()
+	_dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_dim.color = Color(0, 0, 0, 0.55)
+	_dim.visible = false
+	add_child(_dim)
 
 	_overlay = Label.new()
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -43,6 +53,8 @@ func _ready() -> void:
 	GameManager.happiness_changed.connect(_on_happiness_changed)
 	GameManager.money_changed.connect(_on_money_changed)
 	GameManager.state_changed.connect(_on_state_changed)
+	GameManager.time_changed.connect(_on_time_changed)
+	GameManager.day_won.connect(_on_day_won)
 	QuestManager.quest_added.connect(_on_quest_added)
 	QuestManager.quest_step_changed.connect(_on_quest_step_changed)
 	QuestManager.quest_completed.connect(_remove_ticket)
@@ -50,6 +62,7 @@ func _ready() -> void:
 	QuestManager.quests_cleared.connect(_clear_tickets)
 	_on_happiness_changed(GameManager.wife_happiness, GameManager.wife_happiness)
 	_on_money_changed(GameManager.money, GameManager.money)
+	_on_time_changed(int(GameManager.DAY_LENGTH))
 
 
 func _process(_delta: float) -> void:
@@ -70,16 +83,31 @@ func _on_money_changed(new_value: int, _old_value: int) -> void:
 	_money.text = "$ %d" % new_value
 
 
+func _on_time_changed(seconds_left: int) -> void:
+	_clock.text = "TIME %d:%02d" % [seconds_left / 60, seconds_left % 60]
+	_clock.modulate = Color(1.0, 0.45, 0.4) if seconds_left <= 15 else Color.WHITE
+
+
+func _on_day_won(stars: int, final_score: int) -> void:
+	var star_text := "*".repeat(stars) + "-".repeat(3 - stars)
+	_overlay.text = "DAY COMPLETE!\n%s\nScore: %d\nPress Enter for the next day" % [star_text, final_score]
+	_overlay.visible = true
+	_dim.visible = true
+
+
 func _on_state_changed(new_state: int, _old_state: int) -> void:
 	match new_state:
 		GameManager.GameState.GAME_OVER:
+			_dim.visible = true
 			_overlay.text = "GAME OVER\nShe is NOT happy.\nPress Enter to try again"
 			_overlay.visible = true
 		GameManager.GameState.PAUSED:
+			_dim.visible = true
 			_overlay.text = "PAUSED"
 			_overlay.visible = true
 		_:
 			_overlay.visible = false
+			_dim.visible = false
 
 
 func _on_quest_added(quest: ActiveQuest) -> void:
