@@ -184,18 +184,22 @@ func _apply_result(result: Dictionary) -> void:
 		give_item(item)
 
 
-## The nearest station whose InteractZone currently contains this player.
+## The station to work at: among the InteractZones that contain this player, the nearest one where a quest
+## can make progress right now; if none can, simply the nearest. (Zones overlap, e.g. dog and car.)
 func _current_station() -> Station3D:
 	var best: Station3D = null
 	var best_dist := INF
+	var best_can := false
 	for node in get_tree().get_nodes_in_group("stations"):
 		var station := node as Station3D
 		if station == null or not station.has_player(self):
 			continue
+		var can := QuestManager.can_work(station.station_id, held_item_id())
 		var d := Vector2(station.global_position.x - global_position.x, station.global_position.z - global_position.z).length()
-		if d < best_dist:
+		if (can and not best_can) or (can == best_can and d < best_dist):
 			best_dist = d
 			best = station
+			best_can = can
 	return best
 
 

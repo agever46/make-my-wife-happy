@@ -8,6 +8,12 @@ const ICONS := {
 	&"coffee_milk": preload("res://assets/items/coffee_milk.png"),
 	&"trash_bag": preload("res://assets/items/trash_bag.png"),
 	&"keys": preload("res://assets/items/keys.png"),
+	&"laundry": preload("res://assets/items/laundry.png"),
+	&"mail": preload("res://assets/items/mail.png"),
+	&"leash": preload("res://assets/items/leash.png"),
+	&"grocery_bag": preload("res://assets/items/grocery_bag.png"),
+	&"sponge": preload("res://assets/items/sponge.png"),
+	&"remote": preload("res://assets/items/remote.png"),
 }
 const PIXEL_SIZE := 0.0045
 

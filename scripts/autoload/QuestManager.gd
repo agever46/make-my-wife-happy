@@ -15,10 +15,12 @@ signal quest_items_released(quest_uid: int)
 ## Logic -> world: a new day started, remove all items.
 signal world_reset
 
-const MAX_ACTIVE := 3
+## Difficulty ramp over the day (0 = start, 1 = end): more quests at once, shorter gaps between them.
+const MAX_ACTIVE_START := 2
+const MAX_ACTIVE_END := 4
 const FIRST_SPAWN_DELAY := 2.0
-const SPAWN_INTERVAL_MIN := 7.0
-const SPAWN_INTERVAL_MAX := 11.0
+const SPAWN_GAP_START := Vector2(9.0, 13.0)
+const SPAWN_GAP_END := Vector2(4.5, 7.0)
 
 var active: Array[ActiveQuest] = []
 var _spawn_cooldown := FIRST_SPAWN_DELAY
@@ -40,15 +42,25 @@ func _process(delta: float) -> void:
 		return
 	_spawn_cooldown -= delta
 	if _spawn_cooldown <= 0.0:
-		_spawn_cooldown = randf_range(SPAWN_INTERVAL_MIN, SPAWN_INTERVAL_MAX)
+		var gap := SPAWN_GAP_START.lerp(SPAWN_GAP_END, day_progress())
+		_spawn_cooldown = randf_range(gap.x, gap.y)
 		spawn_random()
 
 
 # --- Public API --------------------------------------------------------------
 
+## 0.0 at the start of the day, 1.0 at the end.
+func day_progress() -> float:
+	return clampf(GameManager.elapsed_time / GameManager.DAY_LENGTH, 0.0, 1.0)
+
+
+func max_active() -> int:
+	return roundi(lerpf(MAX_ACTIVE_START, MAX_ACTIVE_END, day_progress()))
+
+
 ## Adds a random quest that fits the current player count. Returns null if none fits.
 func spawn_random() -> ActiveQuest:
-	if active.size() >= MAX_ACTIVE:
+	if active.size() >= max_active():
 		return null
 	var players := maxi(1, GameManager.player_count)
 	var candidates: Array[QuestData] = []
@@ -86,14 +98,10 @@ func start_quest(data: QuestData) -> ActiveQuest:
 func try_work(station_id: StringName, held_item: StringName, delta: float) -> Dictionary:
 	for quest in active:
 		var step := quest.step()
-		if step["station"] != station_id:
+		if not _step_can_run(step, station_id, held_item):
 			continue
 		var needs: StringName = step.get("needs", &"")
 		var gives: StringName = step.get("gives", &"")
-		if needs != &"" and held_item != needs:
-			continue
-		if needs == &"" and gives != &"" and held_item != &"":
-			continue # hands are full
 		quest.work_done += delta
 		var work: float = step.get("work", 0.5)
 		if quest.work_done >= work:
@@ -103,10 +111,28 @@ func try_work(station_id: StringName, held_item: StringName, delta: float) -> Di
 	return {}
 
 
+## True if some active quest could make progress at this station with this held item.
+## Lets the world pick the right station when several interact zones overlap.
+func can_work(station_id: StringName, held_item: StringName) -> bool:
+	for quest in active:
+		if _step_can_run(quest.step(), station_id, held_item):
+			return true
+	return false
+
+
 func is_station_needed(station_id: StringName) -> bool:
 	for quest in active:
 		if quest.step()["station"] == station_id:
 			return true
+	return false
+
+
+## True if any step of any active quest (now or later) uses this station.
+func is_station_involved(station_id: StringName) -> bool:
+	for quest in active:
+		for step in quest.data.steps:
+			if step["station"] == station_id:
+				return true
 	return false
 
 
@@ -129,6 +155,18 @@ func clear_quests() -> void:
 
 
 # --- Internals ---------------------------------------------------------------
+
+func _step_can_run(step: Dictionary, station_id: StringName, held_item: StringName) -> bool:
+	if step["station"] != station_id:
+		return false
+	var needs: StringName = step.get("needs", &"")
+	var gives: StringName = step.get("gives", &"")
+	if needs != &"" and held_item != needs:
+		return false
+	if needs == &"" and gives != &"" and held_item != &"":
+		return false # hands are full
+	return true
+
 
 func _advance(quest: ActiveQuest) -> void:
 	quest.work_done = 0.0

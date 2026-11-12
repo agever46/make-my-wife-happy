@@ -38,6 +38,16 @@ const STATIONS := [
 	{"id": &"fridge", "model": "Interact_Fridge", "cell": Vector2(5, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.9, "bubble": 2.6},
 	{"id": &"trash_can", "model": "Interact_TrashCan", "cell": Vector2(0, 4), "size": Vector2(1, 1), "rot": 90.0, "height": 0.8, "bubble": 1.5},
 	{"id": &"dumpster", "model": "Interact_Dumpster", "cell": Vector2(17, 8), "size": Vector2(2, 1), "rot": 180.0, "height": 1.2, "bubble": 2.0},
+	# Chores stations. Kitchen: washing machine + sink. Yard: clothesline, mailbox, dog, car. Hall: leash hook.
+	{"id": &"washing_machine", "model": "Interact_WashingMachine", "cell": Vector2(0, 7), "size": Vector2(1, 1), "rot": 90.0, "height": 0.95, "bubble": 1.6},
+	{"id": &"sink", "model": "Interact_Sink", "cell": Vector2(1, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.2, "bubble": 1.9},
+	{"id": &"stain", "model": "Interact_Stain", "cell": Vector2(10, 4.5), "size": Vector2(1, 1), "rot": 0.0, "height": 0.05,
+		"solid": false, "shadow": false, "needed_only": true, "bubble": 1.0},
+	{"id": &"clothesline", "model": "Interact_Clothesline", "cell": Vector2(16, 1), "size": Vector2(2, 1), "rot": 0.0, "height": 1.9, "bubble": 2.5, "solid": false},
+	{"id": &"mailbox", "model": "Interact_Mailbox", "cell": Vector2(19, 4), "size": Vector2(1, 1), "rot": 270.0, "height": 1.2, "bubble": 1.9},
+	{"id": &"leash_hook", "model": "Interact_LeashHook", "cell": Vector2(13.6, 3), "size": Vector2(0.4, 1), "rot": 270.0, "height": 1.6, "bubble": 2.0, "zone_margin": 1.0},
+	{"id": &"dog", "model": "Interact_Dog", "cell": Vector2(15, 7), "size": Vector2(1, 1), "rot": 0.0, "height": 0.8, "bubble": 1.4},
+	{"id": &"car", "model": "Interact_Car", "cell": Vector2(14, 9), "size": Vector2(2, 1), "rot": 0.0, "height": 1.0, "bubble": 1.8},
 	# The wife sits on the couch. No collider of her own (the couch is solid); her zone reaches the floor in front of it.
 	{"id": &"wife", "model": "Char_Wife", "cell": Vector2(9, 1.1), "size": Vector2(1, 1), "rot": 0.0, "height": 1.5, "bubble": 2.2,
 		"solid": false, "shadow": false, "zone_margin": 1.3, "script": "wife"},
@@ -46,7 +56,6 @@ const STATIONS := [
 ## Furniture and decoration without interaction.
 const PROPS := [
 	{"model": "Prop_Counter", "cell": Vector2(0, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
-	{"model": "Prop_Counter", "cell": Vector2(1, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Counter", "cell": Vector2(2, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Counter", "cell": Vector2(4, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Counter", "cell": Vector2(6, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
@@ -62,5 +71,5 @@ const PLAYER_START := Vector2(7, 5)
 ## Where lost items (keys) can be hidden (cells, must be reachable).
 const HIDING_SPOTS := [
 	Vector2(2, 2), Vector2(5, 6), Vector2(1, 9), Vector2(12, 2), Vector2(11, 9),
-	Vector2(8, 6), Vector2(16, 2), Vector2(15, 9), Vector2(19, 4),
+	Vector2(8, 6), Vector2(16, 2), Vector2(13, 9), Vector2(18, 3),
 ]

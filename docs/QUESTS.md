@@ -18,7 +18,23 @@ If the player holds the `needs` item (or the step needs none and hands are free)
 seconds the needed item is consumed and the `gives` item appears in the player's hands. Last step done = quest complete.
 TAP interact with free hands near a floor item = pick up; tap while holding = drop.
 
-## Current quests
+## Quests (9)
+| id | steps |
+|---|---|
+| coffee | coffee machine -> fridge (milk) -> wife |
+| trash | trash can -> dumpster (outside) |
+| keys | find the lost keys (hidden at a random spot) -> wife |
+| laundry | washing machine -> clothesline (outside) |
+| mail | mailbox (outside) -> wife |
+| dog | leash hook (hall) -> dog (hold 3.5 s to walk it) |
+| groceries | car (outside) -> fridge |
+| stain | sink (sponge) -> stain on the carpet (scrub, hold 3 s); the stain only shows while this quest is active |
+| remote | find the lost TV remote -> wife |
+
+Difficulty ramps over the day: max quests at once 2 -> 4, gap between new quests 9-13 s -> 4.5-7 s (`QuestManager`).
+New quest = one entry in `QuestDB.gd` (+ stations in `HouseLayout.gd` and item icons in `Item3D.ICONS` if it needs new ones).
+
+## Older notes on the first three quests
 coffee (machine -> fridge for milk -> wife), trash (trash can -> dumpster outside), keys (find the keys at a random
 `hiding_spots` marker -> wife).
 

@@ -21,6 +21,14 @@ static func make(model_name: String) -> Node3D:
 		"Prop_CoffeeTable": _coffee_table(root)
 		"Prop_Rug": _rug(root)
 		"Prop_TV": _tv(root)
+		"Interact_WashingMachine": _washing_machine(root)
+		"Interact_Sink": _sink(root)
+		"Interact_Stain": _stain(root)
+		"Interact_Clothesline": _clothesline(root)
+		"Interact_Mailbox": _mailbox(root)
+		"Interact_LeashHook": _leash_hook(root)
+		"Interact_Dog": _dog(root)
+		"Interact_Car": _car(root)
 		_:
 			box(root, "Unknown", Vector3(0.8, 0.8, 0.8), Vector3.ZERO, Color(1.0, 0.0, 1.0))
 	return root
@@ -180,3 +188,74 @@ static func _tv(r: Node3D) -> void:
 	box(r, "Stand", Vector3(1.8, 0.5, 0.6), Vector3.ZERO, Color(0.66, 0.46, 0.3), 0.05)
 	box(r, "Frame", Vector3(1.4, 0.82, 0.1), Vector3(0, 0.55, 0), Color(0.1, 0.11, 0.15), 0.04)
 	box(r, "Screen", Vector3(1.28, 0.7, 0.02), Vector3(0, 0.61, 0.05), Color(0.3, 0.5, 0.75), 0.005, 0.7)
+
+
+# --- chores: kitchen, yard ------------------------------------------------------
+
+static func _washing_machine(r: Node3D) -> void:
+	box(r, "Body", Vector3(0.88, 0.95, 0.8), Vector3.ZERO, Color(0.9, 0.92, 0.96), 0.07)
+	box(r, "Panel", Vector3(0.88, 0.16, 0.04), Vector3(0, 0.78, 0.4), Color(0.55, 0.6, 0.75), 0.02)
+	box(r, "Door", Vector3(0.5, 0.5, 0.06), Vector3(0, 0.2, 0.4), Color(0.35, 0.5, 0.7), 0.06)
+	box(r, "Glass", Vector3(0.38, 0.38, 0.03), Vector3(0, 0.26, 0.44), Color(0.6, 0.8, 0.95), 0.04, 0.3)
+	box(r, "Knob", Vector3(0.1, 0.1, 0.05), Vector3(0.25, 0.8, 0.43), Color(0.95, 0.5, 0.3), 0.03)
+
+
+static func _sink(r: Node3D) -> void:
+	_counter(r)
+	box(r, "Basin", Vector3(0.6, 0.06, 0.5), Vector3(0, 0.86, 0.02), Color(0.78, 0.8, 0.86), 0.03)
+	box(r, "Water", Vector3(0.5, 0.02, 0.4), Vector3(0, 0.92, 0.02), Color(0.5, 0.75, 0.95), 0.01, 0.3)
+	box(r, "TapBase", Vector3(0.08, 0.3, 0.08), Vector3(0, 0.9, -0.28), Color(0.7, 0.72, 0.78), 0.02)
+	box(r, "TapSpout", Vector3(0.07, 0.07, 0.24), Vector3(0, 1.14, -0.17), Color(0.7, 0.72, 0.78), 0.02)
+
+
+static func _stain(r: Node3D) -> void:
+	var c := Color(0.32, 0.2, 0.14)
+	box(r, "Blob1", Vector3(0.7, 0.03, 0.55), Vector3.ZERO, c, 0.012)
+	box(r, "Blob2", Vector3(0.45, 0.03, 0.7), Vector3(0.1, 0, 0.05), c, 0.012)
+	box(r, "Blob3", Vector3(0.25, 0.03, 0.25), Vector3(-0.35, 0, -0.2), c, 0.012)
+	box(r, "Blob4", Vector3(0.18, 0.03, 0.18), Vector3(0.38, 0, 0.3), c, 0.012)
+
+
+static func _clothesline(r: Node3D) -> void:
+	for x in [-0.9, 0.9]:
+		box(r, "Pole", Vector3(0.1, 1.9, 0.1), Vector3(x, 0, 0), Color(0.6, 0.45, 0.3), 0.03)
+	box(r, "Line", Vector3(1.8, 0.03, 0.03), Vector3(0, 1.75, 0), Color(0.9, 0.9, 0.85), 0.01)
+	var colors := [Color(0.95, 0.4, 0.5), Color(0.4, 0.7, 0.95), Color(0.98, 0.85, 0.35)]
+	for i in 3:
+		box(r, "Cloth", Vector3(0.36, 0.5, 0.04), Vector3(-0.55 + i * 0.55, 1.25, 0), colors[i], 0.02)
+
+
+static func _mailbox(r: Node3D) -> void:
+	box(r, "Post", Vector3(0.12, 0.9, 0.12), Vector3.ZERO, Color(0.6, 0.45, 0.3), 0.03)
+	box(r, "Box", Vector3(0.45, 0.3, 0.7), Vector3(0, 0.9, 0), Color(0.85, 0.3, 0.3), 0.07)
+	box(r, "Flag", Vector3(0.04, 0.3, 0.12), Vector3(0.24, 0.98, -0.1), Color(0.98, 0.85, 0.3), 0.01)
+
+
+static func _leash_hook(r: Node3D) -> void:
+	box(r, "Board", Vector3(0.7, 0.9, 0.08), Vector3(0, 0.7, -0.14), Color(0.62, 0.42, 0.26), 0.03)
+	box(r, "Hook", Vector3(0.06, 0.06, 0.12), Vector3(0, 1.3, -0.06), Color(0.8, 0.8, 0.85), 0.015)
+	box(r, "Leash", Vector3(0.05, 0.5, 0.03), Vector3(0, 0.8, -0.08), Color(0.9, 0.25, 0.3), 0.01)
+
+
+static func _dog(r: Node3D) -> void:
+	var fur := Color(0.85, 0.62, 0.35)
+	box(r, "Body", Vector3(0.4, 0.38, 0.7), Vector3(0, 0.22, 0), fur, 0.07)
+	box(r, "Head", Vector3(0.32, 0.3, 0.32), Vector3(0, 0.45, 0.4), fur, 0.07)
+	box(r, "Snout", Vector3(0.16, 0.12, 0.14), Vector3(0, 0.46, 0.6), Color(0.95, 0.85, 0.7), 0.03)
+	box(r, "Nose", Vector3(0.06, 0.05, 0.04), Vector3(0, 0.52, 0.68), Color(0.1, 0.1, 0.12), 0.01)
+	box(r, "EarL", Vector3(0.08, 0.2, 0.1), Vector3(-0.18, 0.5, 0.38), Color(0.6, 0.4, 0.22), 0.03)
+	box(r, "EarR", Vector3(0.08, 0.2, 0.1), Vector3(0.18, 0.5, 0.38), Color(0.6, 0.4, 0.22), 0.03)
+	box(r, "Tail", Vector3(0.07, 0.07, 0.3), Vector3(0, 0.45, -0.45), fur, 0.02)
+	for x in [-0.14, 0.14]:
+		box(r, "FrontLeg", Vector3(0.1, 0.22, 0.1), Vector3(x, 0.0, 0.25), fur, 0.03)
+		box(r, "BackLeg", Vector3(0.1, 0.22, 0.1), Vector3(x, 0.0, -0.25), fur, 0.03)
+
+
+static func _car(r: Node3D) -> void:
+	box(r, "Body", Vector3(1.9, 0.5, 0.92), Vector3(0, 0.22, 0), Color(0.9, 0.4, 0.3), 0.08)
+	box(r, "Cabin", Vector3(1.0, 0.4, 0.8), Vector3(-0.1, 0.72, 0), Color(0.95, 0.55, 0.45), 0.08)
+	box(r, "Window", Vector3(0.92, 0.26, 0.82), Vector3(-0.1, 0.79, 0), Color(0.6, 0.8, 0.92), 0.05, 0.2)
+	box(r, "Trunk", Vector3(0.04, 0.3, 0.7), Vector3(-0.95, 0.4, 0), Color(0.7, 0.28, 0.2), 0.01)
+	for x in [-0.6, 0.6]:
+		for z in [-0.42, 0.42]:
+			box(r, "Wheel", Vector3(0.34, 0.34, 0.12), Vector3(x, 0.0, z), Color(0.12, 0.12, 0.15), 0.05)

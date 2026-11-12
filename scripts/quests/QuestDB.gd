@@ -18,6 +18,32 @@ static func all() -> Array[QuestData]:
 	], &"keys")
 	keys.spawn_item = &"keys"
 	list.append(keys)
+
+	list.append(_quest(&"laundry", "The laundry! It's going to RAIN!", 36.0, [
+		_step(&"washing_machine", "Grab the wet laundry", 1.8, &"", &"laundry"),
+		_step(&"clothesline", "Hang it outside!", 1.5, &"laundry"),
+	], &"laundry"))
+	list.append(_quest(&"mail", "Did the mail come?!", 32.0, [
+		_step(&"mailbox", "Check the mailbox outside", 1.0, &"", &"mail"),
+		_step(&"wife", "Bring her the mail", 0.3, &"mail"),
+	], &"mail"))
+	list.append(_quest(&"dog", "The dog needs a walk. NOW.", 30.0, [
+		_step(&"leash_hook", "Grab the leash by the door", 0.5, &"", &"leash"),
+		_step(&"dog", "Walk the dog (hold!)", 3.5, &"leash"),
+	], &"leash"))
+	list.append(_quest(&"groceries", "The groceries are in the car!", 36.0, [
+		_step(&"car", "Unload the groceries", 1.2, &"", &"grocery_bag"),
+		_step(&"fridge", "Put them in the fridge", 1.0, &"grocery_bag"),
+	], &"grocery_bag"))
+	list.append(_quest(&"stain", "There is a STAIN on the carpet!", 32.0, [
+		_step(&"sink", "Grab a sponge at the sink", 0.8, &"", &"sponge"),
+		_step(&"stain", "Scrub it (hold!)", 3.0, &"sponge"),
+	], &"sponge"))
+	var remote := _quest(&"remote", "Where is the TV remote?!", 26.0, [
+		_step(&"wife", "Find the remote and bring it", 0.3, &"remote"),
+	], &"remote")
+	remote.spawn_item = &"remote"
+	list.append(remote)
 	return list
 
 

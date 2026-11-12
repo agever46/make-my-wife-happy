@@ -19,12 +19,14 @@ var _rim: ShaderMaterial
 var _indicator: StationIndicator
 var _glow_tween: Tween
 var _bounce_tween: Tween
+var needed_only := false
 var _progress := 0.0
 var _progress_stamp := -100000
 
 
 func setup(def: Dictionary) -> void:
 	station_id = def.get("id", &"")
+	needed_only = def.get("needed_only", false)
 	var size: Vector2 = def["size"]
 	var height: float = def.get("height", 1.0)
 	name = String(station_id) if station_id != &"" else String(def["model"])
@@ -66,6 +68,8 @@ func _process(_delta: float) -> void:
 	if _indicator == null:
 		return
 	var needed := QuestManager.is_station_needed(station_id)
+	if needed_only:
+		visual_root.visible = QuestManager.is_station_involved(station_id) # e.g. the stain exists while its quest is active
 	var icon: Texture2D = null
 	if needed:
 		icon = Item3D.ICONS.get(QuestManager.icon_item_for(station_id))

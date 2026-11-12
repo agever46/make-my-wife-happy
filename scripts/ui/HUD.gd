@@ -23,7 +23,7 @@ var _face_mood: StringName = &""
 var _money: Label
 var _clock: Label
 var _clock_panel: PanelContainer
-var _tickets: VBoxContainer
+var _tickets: HBoxContainer
 var _dim: ColorRect
 var _result: PanelContainer
 var _result_title: Label
@@ -201,11 +201,12 @@ func _build_clock() -> void:
 
 
 func _build_tickets() -> void:
-	_tickets = VBoxContainer.new()
+	# A row of compact cards along the top edge, so they never cover the yard stations.
+	_tickets = HBoxContainer.new()
 	_tickets.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	_tickets.position = Vector2(-264, 14)
-	_tickets.custom_minimum_size = Vector2(250, 0)
+	_tickets.position = Vector2(-14, 14)
 	_tickets.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_tickets.alignment = BoxContainer.ALIGNMENT_END
 	_tickets.add_theme_constant_override("separation", 8)
 	_root.add_child(_tickets)
 
@@ -331,39 +332,44 @@ func _bounce(node: Control, amount: float = 1.25) -> void:
 
 func _on_quest_added(quest: ActiveQuest) -> void:
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", _style(CREAM, ORANGE, 24))
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	panel.add_child(row)
+	var card := _style(CREAM, ORANGE, 20)
+	card.set_content_margin_all(8)
+	panel.add_theme_stylebox_override("panel", card)
+	var col := VBoxContainer.new()
+	col.custom_minimum_size = Vector2(134, 0)
+	col.add_theme_constant_override("separation", 3)
+	panel.add_child(col)
 
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 6)
+	col.add_child(head)
 	var icon_bg := PanelContainer.new()
-	icon_bg.add_theme_stylebox_override("panel", _style(Color(1.0, 0.9, 0.7), ORANGE, 20, 3, false))
-	row.add_child(icon_bg)
+	icon_bg.add_theme_stylebox_override("panel", _style(Color(1.0, 0.9, 0.7), ORANGE, 14, 2, false))
+	head.add_child(icon_bg)
 	var icon := TextureRect.new()
-	icon.custom_minimum_size = Vector2(44, 44)
+	icon.custom_minimum_size = Vector2(34, 34)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.texture = Item3D.ICONS.get(quest.data.icon_item)
 	icon_bg.add_child(icon)
-
-	var col := VBoxContainer.new()
-	col.custom_minimum_size = Vector2(150, 0)
-	col.add_theme_constant_override("separation", 3)
-	row.add_child(col)
-	var title := _label(quest.data.title, 15)
+	var title := _label(quest.data.title, 12)
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	col.add_child(title)
-	var hint := _label(quest.hint(), 12, BROWN.lightened(0.25))
+	title.custom_minimum_size = Vector2(92, 0)
+	title.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	head.add_child(title)
+
+	var hint := _label(quest.hint(), 11, BROWN.lightened(0.25))
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.custom_minimum_size = Vector2(134, 28)
 	col.add_child(hint)
 	var bar := ProgressBar.new()
 	bar.max_value = 1.0
 	bar.value = 1.0
 	bar.show_percentage = false
-	bar.custom_minimum_size = Vector2(0, 14)
-	var fill := _style(GOOD, Color(1, 1, 1, 0.6), 7, 2, false)
+	bar.custom_minimum_size = Vector2(0, 12)
+	var fill := _style(GOOD, Color(1, 1, 1, 0.6), 6, 2, false)
 	fill.set_content_margin_all(0)
-	var bg := _style(Color(0.3, 0.2, 0.18), BROWN, 7, 2, false)
+	var bg := _style(Color(0.3, 0.2, 0.18), BROWN, 6, 2, false)
 	bg.set_content_margin_all(0)
 	bar.add_theme_stylebox_override("background", bg)
 	bar.add_theme_stylebox_override("fill", fill)
