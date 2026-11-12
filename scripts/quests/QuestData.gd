@@ -4,6 +4,8 @@ extends Resource
 
 @export var id: StringName
 @export var title: String
+## Item whose icon represents this quest on the ticket.
+@export var icon_item: StringName = &""
 ## Seconds before the wife loses patience.
 @export var patience: float = 30.0
 @export var reward_happiness: float = 12.0

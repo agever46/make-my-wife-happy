@@ -36,6 +36,9 @@ var money: int = 0
 var elapsed_time: float = 0.0
 var decay_per_second: float = BASE_DECAY_PER_SECOND
 
+## Set by the world: how many players are in the game. Logic never searches the scene tree.
+var player_count: int = 0
+
 var _timer: Timer
 
 
@@ -47,6 +50,14 @@ func _ready() -> void:
 	_timer.process_mode = Node.PROCESS_MODE_PAUSABLE # stops automatically with get_tree().paused
 	_timer.timeout.connect(_on_tick)
 	add_child(_timer)
+
+
+func register_player() -> void:
+	player_count += 1
+
+
+func unregister_player() -> void:
+	player_count = maxi(0, player_count - 1)
 
 
 # --- State machine -----------------------------------------------------------

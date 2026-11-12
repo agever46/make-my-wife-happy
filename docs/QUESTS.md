@@ -1,4 +1,6 @@
-# Quest system, stations and items
+# Quest system, stations and items (3D version)
+
+> The 2D version of these pieces (Station.gd, Item.gd, Wife.gd, Room.gd, Player.gd) was replaced by `scripts/world3d/*`. See `docs/3D_PLAN.md` for the logic / rendering split.
 
 ## Pieces
 - `scripts/autoload/QuestManager.gd` (autoload): spawns a random quest every 7-11 s (max 3 active), counts down

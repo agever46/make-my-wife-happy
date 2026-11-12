@@ -1,4 +1,4 @@
-extends Node2D
+extends Node3D
 ## Day 1 scene: starts the game and handles pause / restart keys.
 
 func _ready() -> void:

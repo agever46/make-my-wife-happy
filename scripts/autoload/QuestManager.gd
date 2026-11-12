@@ -1,12 +1,19 @@
 extends Node
-## Quest board (Autoload: QuestManager). Spawns random chores, counts down their patience,
-## and advances them when a player works at the right station with the right item.
+## Quest board (Autoload: QuestManager). PURE LOGIC: it only knows station ids and item ids,
+## never nodes. Spawns random chores, counts down patience and advances steps.
+## The world (2D or 3D) talks to it through try_work() and reacts to the item_* / world_reset signals.
 
 signal quest_added(quest: ActiveQuest)
 signal quest_step_changed(quest: ActiveQuest)
 signal quest_completed(quest: ActiveQuest)
 signal quest_failed(quest: ActiveQuest)
 signal quests_cleared
+## Logic -> world: please create this item somewhere reachable (e.g. lost keys at a hiding spot).
+signal item_spawn_requested(quest_uid: int, item_id: StringName)
+## Logic -> world: the quest ended, remove every item tagged with this quest_uid.
+signal quest_items_released(quest_uid: int)
+## Logic -> world: a new day started, remove all items.
+signal world_reset
 
 const MAX_ACTIVE := 3
 const FIRST_SPAWN_DELAY := 2.0
@@ -43,10 +50,10 @@ func _process(delta: float) -> void:
 func spawn_random() -> ActiveQuest:
 	if active.size() >= MAX_ACTIVE:
 		return null
-	var player_count := maxi(1, get_tree().get_nodes_in_group("players").size())
+	var players := maxi(1, GameManager.player_count)
 	var candidates: Array[QuestData] = []
 	for data in QuestDB.all():
-		if player_count < data.min_players or player_count > data.max_players:
+		if players < data.min_players or players > data.max_players:
 			continue
 		if _is_active(data.id):
 			continue
@@ -62,41 +69,38 @@ func start_quest(data: QuestData) -> ActiveQuest:
 	_next_uid += 1
 	quest.data = data
 	quest.time_left = data.patience
-	if data.spawn_item != &"":
-		var spots := get_tree().get_nodes_in_group("hiding_spots")
-		if spots.is_empty():
-			return null
-		var spot := spots.pick_random() as Node2D
-		var item := Item.create(data.spawn_item)
-		spot.get_parent().add_child(item)
-		item.position = spot.position
-		quest.items.append(item)
 	active.append(quest)
 	quest_added.emit(quest)
+	if data.spawn_item != &"":
+		item_spawn_requested.emit(quest.uid, data.spawn_item)
 	return quest
 
 
 ## Called every frame while a player holds `interact` at a station.
-## Returns the step progress (0..1), or -1.0 if there is nothing to do here.
-func try_work(station: Station, player: Player, delta: float) -> float:
-	var held := player.held_item_id()
+## Returns {} when there is nothing to do here. Otherwise:
+##   progress  0..1 of the current step
+##   done      true on the frame the step finished (logic already advanced)
+##   consume   true if the held item must be removed (only when done)
+##   give      item id the player must receive (only when done), &"" for none
+##   quest_uid uid of the quest, so the world can tag a given item for cleanup
+func try_work(station_id: StringName, held_item: StringName, delta: float) -> Dictionary:
 	for quest in active:
 		var step := quest.step()
-		if step["station"] != station.station_id:
+		if step["station"] != station_id:
 			continue
 		var needs: StringName = step.get("needs", &"")
 		var gives: StringName = step.get("gives", &"")
-		if needs != &"" and held != needs:
+		if needs != &"" and held_item != needs:
 			continue
-		if needs == &"" and gives != &"" and held != &"":
+		if needs == &"" and gives != &"" and held_item != &"":
 			continue # hands are full
 		quest.work_done += delta
 		var work: float = step.get("work", 0.5)
 		if quest.work_done >= work:
-			_complete_step(quest, player)
-			return 1.0
-		return quest.work_done / work
-	return -1.0
+			_advance(quest)
+			return {"progress": 1.0, "done": true, "consume": needs != &"", "give": gives, "quest_uid": quest.uid}
+		return {"progress": quest.work_done / work, "done": false, "consume": false, "give": &"", "quest_uid": quest.uid}
+	return {}
 
 
 func is_station_needed(station_id: StringName) -> bool:
@@ -106,18 +110,19 @@ func is_station_needed(station_id: StringName) -> bool:
 	return false
 
 
+## Item id to show on a station's floating icon: what you will get there, else what you must bring.
+func icon_item_for(station_id: StringName) -> StringName:
+	for quest in active:
+		var step := quest.step()
+		if step["station"] == station_id:
+			var gives: StringName = step.get("gives", &"")
+			return gives if gives != &"" else step.get("needs", &"")
+	return &""
+
+
 # --- Internals ---------------------------------------------------------------
 
-func _complete_step(quest: ActiveQuest, player: Player) -> void:
-	var step := quest.step()
-	var needs: StringName = step.get("needs", &"")
-	var gives: StringName = step.get("gives", &"")
-	if needs != &"":
-		player.consume_item()
-	if gives != &"":
-		var item := Item.create(gives)
-		quest.items.append(item)
-		player.give_item(item)
+func _advance(quest: ActiveQuest) -> void:
 	quest.work_done = 0.0
 	if quest.step_index + 1 >= quest.data.steps.size():
 		_finish(quest, true)
@@ -128,7 +133,7 @@ func _complete_step(quest: ActiveQuest, player: Player) -> void:
 
 func _finish(quest: ActiveQuest, success: bool) -> void:
 	active.erase(quest)
-	_free_items(quest)
+	quest_items_released.emit(quest.uid)
 	if success:
 		quest_completed.emit(quest)
 		GameManager.add_money(quest.data.reward_money)
@@ -136,13 +141,6 @@ func _finish(quest: ActiveQuest, success: bool) -> void:
 	else:
 		quest_failed.emit(quest)
 		GameManager.remove_happiness(quest.data.fail_penalty)
-
-
-func _free_items(quest: ActiveQuest) -> void:
-	for item in quest.items:
-		if is_instance_valid(item):
-			item.destroy()
-	quest.items.clear()
 
 
 func _is_active(id: StringName) -> bool:
@@ -153,12 +151,7 @@ func _is_active(id: StringName) -> bool:
 
 
 func _reset() -> void:
-	for quest in active:
-		_free_items(quest)
 	active.clear()
-	for node in get_tree().get_nodes_in_group("items"):
-		var item := node as Item
-		if item != null:
-			item.destroy()
+	world_reset.emit()
 	_spawn_cooldown = FIRST_SPAWN_DELAY
 	quests_cleared.emit()

@@ -8,8 +8,6 @@ var step_index: int = 0
 var time_left: float = 0.0
 ## Seconds of work already done on the current step.
 var work_done: float = 0.0
-## Items created for this quest; removed when it ends.
-var items: Array[Item] = []
 
 
 func step() -> Dictionary:
