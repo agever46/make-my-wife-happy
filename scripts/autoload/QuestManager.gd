@@ -120,6 +120,14 @@ func icon_item_for(station_id: StringName) -> StringName:
 	return &""
 
 
+## Removes every active quest without reward or penalty (debug).
+func clear_quests() -> void:
+	for quest in active:
+		quest_items_released.emit(quest.uid)
+	active.clear()
+	quests_cleared.emit()
+
+
 # --- Internals ---------------------------------------------------------------
 
 func _advance(quest: ActiveQuest) -> void:

@@ -38,6 +38,8 @@ var decay_per_second: float = BASE_DECAY_PER_SECOND
 
 ## Set by the world: how many players are in the game. Logic never searches the scene tree.
 var player_count: int = 0
+## Debug: while true the Wife-O-Meter cannot go down (see DebugConsole).
+var god_mode := false
 
 var _timer: Timer
 
@@ -150,10 +152,29 @@ func happiness_ratio() -> float:
 	return wife_happiness / MAX_HAPPINESS
 
 
+# --- Debug helpers (used by the debug console) --------------------------------
+
+func set_happiness(value: float) -> void:
+	if state != GameState.PLAYING:
+		return
+	var old := wife_happiness
+	wife_happiness = clampf(value, 0.0, MAX_HAPPINESS)
+	happiness_changed.emit(wife_happiness, old)
+	if wife_happiness <= 0.0:
+		end_game()
+
+
+func set_time_left(seconds: float) -> void:
+	elapsed_time = clampf(DAY_LENGTH - seconds, 0.0, DAY_LENGTH)
+	time_changed.emit(time_left())
+
+
 # --- Internals ---------------------------------------------------------------
 
 func _change_happiness(delta: float) -> void:
 	if state != GameState.PLAYING:
+		return
+	if god_mode and delta < 0.0:
 		return
 	var old := wife_happiness
 	wife_happiness = clampf(wife_happiness + delta, 0.0, MAX_HAPPINESS)
