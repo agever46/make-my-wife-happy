@@ -34,6 +34,15 @@ TAP interact with free hands near a floor item = pick up; tap while holding = dr
 Difficulty ramps over the day: max quests at once 2 -> 4, gap between new quests 9-13 s -> 4.5-7 s (`QuestManager`).
 New quest = one entry in `QuestDB.gd` (+ stations in `HouseLayout.gd` and item icons in `Item3D.ICONS` if it needs new ones).
 
+## The school bus and the kids (event)
+- `EventManager` (autoload, logic) calls the bus at `BUS_TIME` (22 s into the day). The world (`BusEvent.gd`) drives a yellow bus
+  along the road, the two kids (Mia = `kid_a`, Noah = `kid_b`) walk through the yard and the door to their chairs.
+- When both sit, `EventManager.kids_seated()` sets the flag `kids_home` and starts the two **dinner** orders; the bus leaves.
+- Dinner for each kid: fridge (ingredients) -> stove (cook, hold 3.5 s) -> serve the kid. A plate appears on the table.
+- While the kids are home they also make random requests (quests with `requires = kids_home`): water (sink), ketchup / cookie (fridge), lost toy duck (hidden in the house). Each kid has its own set.
+- Quest fields: `requires` (needs a flag), `event_only` (never picked at random), `kid` (which kid reacts when it is done).
+- A day is 150 s now. Debug: `bus` calls the bus immediately.
+
 ## Older notes on the first three quests
 coffee (machine -> fridge for milk -> wife), trash (trash can -> dumpster outside), keys (find the keys at a random
 `hiding_spots` marker -> wife).

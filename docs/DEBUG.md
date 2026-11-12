@@ -13,6 +13,7 @@ The game is paused while it is open. Up / Down = command history, Tab = complete
 | `time <seconds>` | set the seconds left in the day |
 | `quest <coffee\|trash\|keys\|random>` | start a quest right now |
 | `quests` / `clear` | list active quests / remove them all (no reward, no penalty) |
+| `bus` | call the school bus now (kids arrive, dinner orders start) |
 | `win` / `lose` / `restart` | end the day with victory / game over / start a new day |
 | `god [on\|off]` | the Wife-O-Meter can not drop |
 | `tp <station>` or `tp <x> <z>` | teleport player 1 (stations: coffee_machine fridge trash_can dumpster wife) |

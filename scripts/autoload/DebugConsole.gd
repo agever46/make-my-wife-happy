@@ -4,6 +4,8 @@ extends CanvasLayer
 ## The game is paused while the console is open.
 
 const MAX_LOG_LINES := 200
+## preload instead of the global class name: autoloads are parsed before the class cache exists on a fresh checkout.
+const ITEM_SCRIPT := preload("res://scripts/world3d/Item3D.gd")
 const HELP := {
 	"help": "help [command]  - list commands",
 	"status": "status  - show happiness, money, time, state, quests",
@@ -12,13 +14,14 @@ const HELP := {
 	"time": "time <seconds>  - set the seconds left in the day",
 	"quest": "quest <id|random>  - start a quest now (ids: see quests)",
 	"quests": "quests  - list active quests and quest ids",
+	"bus": "bus  - call the school bus now (kids arrive, dinner orders start)",
 	"clear": "clear  - remove all quests (no reward, no penalty)",
 	"win": "win  - finish the day now (victory)",
 	"lose": "lose  - game over now",
 	"restart": "restart  - start a new day",
 	"god": "god [on|off]  - the Wife-O-Meter can not drop",
-	"tp": "tp <station id>  or  tp <x> <z>  - teleport player 1 (see station ids in HouseLayout.gd, e.g. coffee_machine fridge sink washing_machine trash_can dumpster wife mailbox dog car clothesline leash_hook stain)",
-	"give": "give <item>  - put an item in player 1's hands (coffee coffee_milk trash_bag keys laundry mail leash grocery_bag sponge remote)",
+	"tp": "tp <station id>  or  tp <x> <z>  - teleport player 1 (see station ids in HouseLayout.gd, e.g. stove kid_a kid_b coffee_machine fridge sink washing_machine trash_can dumpster wife mailbox dog car clothesline leash_hook stain)",
+	"give": "give <item>  - put an item in player 1's hands (coffee coffee_milk trash_bag keys laundry mail leash grocery_bag sponge remote ingredients dinner_plate water ketchup cookie toy)",
 	"speed": "speed <m/s>  - player 1 walking speed (default 5.4)",
 	"timescale": "timescale <x>  - game speed (1 = normal)",
 	"close": "close  - close the console",
@@ -174,6 +177,9 @@ func execute(line: String) -> void:
 		"time": _cmd_time(args)
 		"quest": _cmd_quest(args)
 		"quests": _cmd_quests()
+		"bus":
+			EventManager.call_bus()
+			_print("Bus called.")
 		"clear":
 			QuestManager.clear_quests()
 			_print("All quests removed.")
@@ -303,10 +309,10 @@ func _cmd_give(args: PackedStringArray) -> void:
 		_error("usage: give <item id>")
 		return
 	var id := StringName(args[0])
-	if not Item3D.ICONS.has(id):
-		_error("Unknown item. Items: %s" % ", ".join(Item3D.ICONS.keys().map(func(k): return String(k))))
+	if not ITEM_SCRIPT.ICONS.has(id):
+		_error("Unknown item. Items: %s" % ", ".join(ITEM_SCRIPT.ICONS.keys().map(func(k): return String(k))))
 		return
-	var item := Item3D.create(id)
+	var item: Item3D = ITEM_SCRIPT.create(id)
 	var root := get_tree().get_first_node_in_group("item_root") as Node3D
 	(root if root != null else player.get_parent()).add_child(item)
 	player.give_item(item)

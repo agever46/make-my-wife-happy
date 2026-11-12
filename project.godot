@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 GameManager="*res://scripts/autoload/GameManager.gd"
 QuestManager="*res://scripts/autoload/QuestManager.gd"
+EventManager="*res://scripts/autoload/EventManager.gd"
 DebugConsole="*res://scripts/autoload/DebugConsole.gd"
 
 [display]

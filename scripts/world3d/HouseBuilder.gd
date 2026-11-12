@@ -13,6 +13,9 @@ const GRASS_A := Color(0.45, 0.74, 0.32)
 const GRASS_B := Color(0.5, 0.79, 0.36)
 const PATH_A := Color(0.64, 0.6, 0.55)
 const PATH_B := Color(0.58, 0.54, 0.5)
+const ROAD_A := Color(0.3, 0.3, 0.35)
+const ROAD_B := Color(0.34, 0.34, 0.39)
+const LANE := Color(0.93, 0.8, 0.3)
 const WALL := Color(0.9, 0.79, 0.64)
 const WALL_LOW := Color(0.86, 0.68, 0.5)
 const FRAME := Color(0.62, 0.42, 0.26)
@@ -61,6 +64,8 @@ func _floor_color(ch: String, x: int, z: int) -> Color:
 		"w", "D": return WOOD_A if x % 2 == 0 else WOOD_B
 		"g": return GRASS_A if checker else GRASS_B
 		"p": return PATH_A if checker else PATH_B
+		"r": return ROAD_A if checker else ROAD_B
+		"R": return LANE
 	return Color(0, 0, 0, 0)
 
 

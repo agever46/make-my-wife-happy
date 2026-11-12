@@ -22,6 +22,8 @@ const FIRST_SPAWN_DELAY := 2.0
 const SPAWN_GAP_START := Vector2(9.0, 13.0)
 const SPAWN_GAP_END := Vector2(4.5, 7.0)
 
+## Story flags set by events (e.g. kids_home). Quests may require one.
+var flags := {}
 var active: Array[ActiveQuest] = []
 var _spawn_cooldown := FIRST_SPAWN_DELAY
 var _next_uid := 1
@@ -49,6 +51,18 @@ func _process(delta: float) -> void:
 
 # --- Public API --------------------------------------------------------------
 
+func set_flag(flag: StringName, value: bool = true) -> void:
+	flags[flag] = value
+
+
+## Starts a quest by id regardless of the board limit (events, debug). Returns null if the id is unknown.
+func start_by_id(id: StringName) -> ActiveQuest:
+	for data in QuestDB.all():
+		if data.id == id:
+			return start_quest(data)
+	return null
+
+
 ## 0.0 at the start of the day, 1.0 at the end.
 func day_progress() -> float:
 	return clampf(GameManager.elapsed_time / GameManager.DAY_LENGTH, 0.0, 1.0)
@@ -66,6 +80,8 @@ func spawn_random() -> ActiveQuest:
 	var candidates: Array[QuestData] = []
 	for data in QuestDB.all():
 		if players < data.min_players or players > data.max_players:
+			continue
+		if data.event_only or (data.requires != &"" and not flags.get(data.requires, false)):
 			continue
 		if _is_active(data.id):
 			continue
@@ -198,6 +214,7 @@ func _is_active(id: StringName) -> bool:
 
 func _reset() -> void:
 	active.clear()
+	flags.clear()
 	world_reset.emit()
 	_spawn_cooldown = FIRST_SPAWN_DELAY
 	quests_cleared.emit()

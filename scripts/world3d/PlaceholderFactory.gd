@@ -29,6 +29,12 @@ static func make(model_name: String) -> Node3D:
 		"Interact_LeashHook": _leash_hook(root)
 		"Interact_Dog": _dog(root)
 		"Interact_Car": _car(root)
+		"Interact_Stove": _stove(root)
+		"Prop_DiningTable": _dining_table(root)
+		"Prop_Chair": _chair(root)
+		"Prop_Bus": _bus(root)
+		"Char_Kid_A": _kid(root, Color(0.98, 0.6, 0.25), Color(0.25, 0.15, 0.1), true)
+		"Char_Kid_B": _kid(root, Color(0.35, 0.75, 0.45), Color(0.8, 0.55, 0.25), false)
 		_:
 			box(root, "Unknown", Vector3(0.8, 0.8, 0.8), Vector3.ZERO, Color(1.0, 0.0, 1.0))
 	return root
@@ -259,3 +265,78 @@ static func _car(r: Node3D) -> void:
 	for x in [-0.6, 0.6]:
 		for z in [-0.42, 0.42]:
 			box(r, "Wheel", Vector3(0.34, 0.34, 0.12), Vector3(x, 0.0, z), Color(0.12, 0.12, 0.15), 0.05)
+
+
+# --- dinner ---------------------------------------------------------------------
+
+static func _stove(r: Node3D) -> void:
+	_counter(r)
+	box(r, "Cooktop", Vector3(0.84, 0.04, 0.7), Vector3(0, 0.91, 0), Color(0.15, 0.15, 0.18), 0.015)
+	for x in [-0.2, 0.2]:
+		for z in [-0.15, 0.15]:
+			box(r, "Burner", Vector3(0.22, 0.02, 0.22), Vector3(x, 0.95, z), Color(0.35, 0.35, 0.4), 0.01)
+	box(r, "Pot", Vector3(0.34, 0.26, 0.34), Vector3(-0.2, 0.95, 0.15), Color(0.75, 0.78, 0.85), 0.05)
+	box(r, "PotHandle", Vector3(0.14, 0.04, 0.05), Vector3(-0.42, 1.12, 0.15), Color(0.2, 0.2, 0.24), 0.01)
+	box(r, "Knob", Vector3(0.07, 0.07, 0.04), Vector3(0.22, 0.75, 0.42), Color(0.95, 0.5, 0.3), 0.02)
+	box(r, "Knob", Vector3(0.07, 0.07, 0.04), Vector3(-0.22, 0.75, 0.42), Color(0.95, 0.5, 0.3), 0.02)
+
+
+static func _dining_table(r: Node3D) -> void:
+	var wood := Color(0.7, 0.48, 0.3)
+	box(r, "Top", Vector3(1.95, 0.08, 0.92), Vector3(0, 0.72, 0), wood, 0.03)
+	box(r, "Cloth", Vector3(1.9, 0.02, 0.5), Vector3(0, 0.8, 0), Color(0.98, 0.9, 0.75), 0.008)
+	for x in [-0.85, 0.85]:
+		for z in [-0.38, 0.38]:
+			box(r, "Leg", Vector3(0.09, 0.72, 0.09), Vector3(x, 0.0, z), Color(0.55, 0.38, 0.24), 0.02)
+
+
+static func _chair(r: Node3D) -> void:
+	var wood := Color(0.62, 0.42, 0.26)
+	box(r, "Seat", Vector3(0.5, 0.06, 0.5), Vector3(0, 0.42, 0), wood, 0.02)
+	box(r, "Back", Vector3(0.5, 0.5, 0.06), Vector3(0, 0.48, -0.22), wood, 0.02)
+	for x in [-0.2, 0.2]:
+		for z in [-0.2, 0.2]:
+			box(r, "Leg", Vector3(0.05, 0.42, 0.05), Vector3(x, 0.0, z), Color(0.5, 0.34, 0.2), 0.01)
+
+
+static func _bus(r: Node3D) -> void:
+	var yellow := Color(0.98, 0.78, 0.15)
+	box(r, "Body", Vector3(2.1, 1.1, 5.0), Vector3(0, 0.3, 0), yellow, 0.12)
+	box(r, "Roof", Vector3(1.96, 0.18, 4.7), Vector3(0, 1.4, 0), Color(0.99, 0.84, 0.3), 0.06)
+	box(r, "Stripe", Vector3(2.14, 0.1, 5.04), Vector3(0, 0.78, 0), Color(0.15, 0.15, 0.18), 0.02)
+	box(r, "Hood", Vector3(1.9, 0.5, 0.9), Vector3(0, 0.3, 2.7), yellow, 0.1)
+	for z in [-1.7, -0.9, -0.1, 0.7]:
+		box(r, "WindowL", Vector3(0.04, 0.4, 0.55), Vector3(-1.06, 0.95, z), Color(0.55, 0.78, 0.92), 0.01, 0.2)
+		box(r, "WindowR", Vector3(0.04, 0.4, 0.55), Vector3(1.06, 0.95, z), Color(0.55, 0.78, 0.92), 0.01, 0.2)
+	box(r, "Door", Vector3(0.05, 0.9, 0.7), Vector3(-1.07, 0.35, 1.5), Color(0.3, 0.55, 0.7), 0.01)
+	box(r, "StopSign", Vector3(0.05, 0.3, 0.3), Vector3(-1.12, 0.85, 0.35), Color(0.9, 0.2, 0.2), 0.02)
+	box(r, "Windshield", Vector3(1.8, 0.45, 0.04), Vector3(0, 0.9, 2.28), Color(0.55, 0.78, 0.92), 0.01, 0.2)
+	for x in [-1.0, 1.0]:
+		for z in [-1.6, 1.6]:
+			box(r, "Wheel", Vector3(0.18, 0.5, 0.5), Vector3(x, 0.0, z), Color(0.1, 0.1, 0.12), 0.06)
+
+
+static func _kid(r: Node3D, shirt: Color, hair: Color, pigtails: bool) -> void:
+	var inner := Node3D.new()
+	inner.name = "KidBody"
+	inner.scale = Vector3.ONE * 0.7
+	r.add_child(inner)
+	for side in [-1.0, 1.0]:
+		var leg := pivot(inner, "LegL" if side < 0.0 else "LegR", Vector3(side * 0.11, 0.8, 0.0))
+		box(leg, "Thigh", Vector3(0.18, 0.4, 0.2), Vector3(0, -0.4, 0), Color(0.3, 0.4, 0.7))
+		var knee := pivot(leg, "KneeL" if side < 0.0 else "KneeR", Vector3(0, -0.4, 0))
+		box(knee, "Shin", Vector3(0.17, 0.28, 0.18), Vector3(0, -0.28, 0), Color(0.3, 0.4, 0.7))
+		box(knee, "Shoe", Vector3(0.2, 0.12, 0.32), Vector3(0, -0.4, 0.06), Color(0.95, 0.95, 0.95), 0.05)
+		var arm := pivot(inner, "ArmL" if side < 0.0 else "ArmR", Vector3(side * 0.3, 1.34, 0.0))
+		box(arm, "Sleeve", Vector3(0.15, 0.2, 0.17), Vector3(0, -0.2, 0), shirt)
+		box(arm, "Forearm", Vector3(0.12, 0.32, 0.14), Vector3(0, -0.52, 0), SKIN)
+	box(inner, "Torso", Vector3(0.46, 0.58, 0.28), Vector3(0, 0.8, 0), shirt, 0.06)
+	var head := pivot(inner, "Head", Vector3(0, 1.4, 0))
+	box(head, "Skull", Vector3(0.42, 0.4, 0.38), Vector3.ZERO, SKIN, 0.07)
+	box(head, "Hair", Vector3(0.44, 0.14, 0.4), Vector3(0, 0.34, 0), hair, 0.04)
+	box(head, "EyeL", Vector3(0.06, 0.07, 0.02), Vector3(-0.1, 0.2, 0.195), Color(0.12, 0.1, 0.1), 0.01)
+	box(head, "EyeR", Vector3(0.06, 0.07, 0.02), Vector3(0.1, 0.2, 0.195), Color(0.12, 0.1, 0.1), 0.01)
+	box(head, "Mouth", Vector3(0.1, 0.03, 0.02), Vector3(0, 0.07, 0.195), Color(0.75, 0.25, 0.3), 0.01)
+	if pigtails:
+		box(head, "PigtailL", Vector3(0.12, 0.3, 0.12), Vector3(-0.27, 0.0, 0.0), hair, 0.04)
+		box(head, "PigtailR", Vector3(0.12, 0.3, 0.12), Vector3(0.27, 0.0, 0.0), hair, 0.04)

@@ -29,6 +29,9 @@ var _result: PanelContainer
 var _result_title: Label
 var _result_sub: Label
 var _stars: StarRow
+var _banner: PanelContainer
+var _banner_label: Label
+var _banner_tween: Tween
 ## quest uid -> { panel, hint, bar, fill, quest }
 var _ticket_nodes := {}
 
@@ -65,6 +68,7 @@ func _ready() -> void:
 	_build_clock()
 	_build_tickets()
 	_build_result()
+	_build_banner()
 
 	GameManager.happiness_changed.connect(_on_happiness_changed)
 	GameManager.money_changed.connect(_on_money_changed)
@@ -77,12 +81,18 @@ func _ready() -> void:
 	QuestManager.quest_completed.connect(_on_quest_done.bind(true))
 	QuestManager.quest_failed.connect(_on_quest_done.bind(false))
 	QuestManager.quests_cleared.connect(_clear_tickets)
+	EventManager.announcement.connect(_show_banner)
 	_on_happiness_changed(GameManager.wife_happiness, GameManager.wife_happiness)
 	_on_money_changed(GameManager.money, GameManager.money)
 	_on_time_changed(int(GameManager.DAY_LENGTH))
 
 
 func _process(_delta: float) -> void:
+	# Many tickets: shrink the row so it never reaches the clock.
+	var count := _ticket_nodes.size()
+	var k := clampf(4.0 / maxf(count, 1.0), 0.6, 1.0)
+	_tickets.pivot_offset = Vector2(_tickets.size.x, 0.0)
+	_tickets.scale = Vector2(k, k)
 	for uid in _ticket_nodes:
 		var entry: Dictionary = _ticket_nodes[uid]
 		var quest: ActiveQuest = entry["quest"]
@@ -209,6 +219,37 @@ func _build_tickets() -> void:
 	_tickets.alignment = BoxContainer.ALIGNMENT_END
 	_tickets.add_theme_constant_override("separation", 8)
 	_root.add_child(_tickets)
+
+
+func _build_banner() -> void:
+	_banner = PanelContainer.new()
+	_banner.add_theme_stylebox_override("panel", _style(Color(1.0, 0.82, 0.2), Color(0.55, 0.35, 0.05), 30, 6))
+	_banner.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_banner.position = Vector2(0, 150)
+	_banner.visible = false
+	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_banner)
+	_banner_label = _label("", 34, Color.WHITE, 10)
+	_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_banner.add_child(_banner_label)
+
+
+## Big message that pops in, stays a moment and fades (school bus, dinner time...).
+func _show_banner(text: String) -> void:
+	_banner_label.text = text
+	_banner.visible = true
+	_banner.modulate.a = 1.0
+	await get_tree().process_frame
+	_banner.pivot_offset = _banner.size * 0.5
+	_banner.scale = Vector2(0.5, 0.5)
+	if _banner_tween != null:
+		_banner_tween.kill()
+	_banner_tween = create_tween()
+	_banner_tween.tween_property(_banner, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_banner_tween.tween_interval(2.0)
+	_banner_tween.tween_property(_banner, "modulate:a", 0.0, 0.5)
+	_banner_tween.tween_callback(func() -> void: _banner.visible = false)
 
 
 func _build_result() -> void:

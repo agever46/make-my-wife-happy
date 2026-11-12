@@ -2,9 +2,9 @@ class_name CameraRig
 extends Node3D
 ## Fixed, angled camera for the diorama look (like Overcooked): looks at `target` from the south, tilted down.
 
-@export var target := Vector3(10.0, 0.0, 4.9)
+@export var target := Vector3(11.0, 0.0, 4.9)
 @export_range(30.0, 75.0) var pitch_degrees: float = 55.0
-@export var distance: float = 21.0
+@export var distance: float = 23.5
 @export_range(20.0, 70.0) var fov: float = 38.0
 
 var camera: Camera3D

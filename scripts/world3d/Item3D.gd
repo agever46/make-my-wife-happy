@@ -14,6 +14,12 @@ const ICONS := {
 	&"grocery_bag": preload("res://assets/items/grocery_bag.png"),
 	&"sponge": preload("res://assets/items/sponge.png"),
 	&"remote": preload("res://assets/items/remote.png"),
+	&"dinner_plate": preload("res://assets/items/dinner_plate.png"),
+	&"ingredients": preload("res://assets/items/ingredients.png"),
+	&"water": preload("res://assets/items/water.png"),
+	&"ketchup": preload("res://assets/items/ketchup.png"),
+	&"cookie": preload("res://assets/items/cookie.png"),
+	&"toy": preload("res://assets/items/toy.png"),
 }
 const PIXEL_SIZE := 0.0045
 

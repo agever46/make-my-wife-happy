@@ -17,3 +17,9 @@ extends Resource
 @export var spawn_item: StringName = &""
 ## Ordered steps. Each: { station, needs (item id or &""), gives (item id or &""), work (seconds), text }.
 @export var steps: Array[Dictionary] = []
+## Only offered while this flag is set (e.g. &"kids_home"). Empty = always available.
+@export var requires: StringName = &""
+## Never picked at random; started by an event (e.g. the dinner orders when the kids sit down).
+@export var event_only: bool = false
+## Which kid station this quest is about (kid_a / kid_b), for the reaction animation. Empty = none.
+@export var kid: StringName = &""

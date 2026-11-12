@@ -20,6 +20,10 @@ func _ready() -> void:
 	items_root.add_to_group("item_root")
 	add_child(items_root)
 
+	var bus_event := BusEvent.new()
+	bus_event.name = "BusEvent"
+	add_child(bus_event)
+
 	var player := PLAYER_SCENE.instantiate() as Player3D
 	player.name = "Player1"
 	player.position = Grid.center(HouseLayout.PLAYER_START)

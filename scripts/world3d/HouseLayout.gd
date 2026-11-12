@@ -3,21 +3,21 @@ extends RefCounted
 ## The whole day-1 map as data. Edit this file to change the house; HouseBuilder turns it into 3D.
 ## Every character of MAP is one 1 m x 1 m tile (x grows to the right, z grows downwards / towards the camera).
 ##   k = kitchen tile    w = living-room wood    D = doorway (wood, with a gap in the east wall)
-##   g = grass           p = stone path          . = nothing
+##   g = grass           p = stone path          r = road      R = road with a lane marking
 ## Cells k, w and D are "inside the house": walls are generated along every edge where inside meets outside.
 
 const MAP := [
-	"kkkkkkkwwwwwwwgggggg", # z 0  (north, back wall)
-	"kkkkkkkwwwwwwwgggggg",
-	"kkkkkkkwwwwwwwgggggg",
-	"kkkkkkkwwwwwwwgggggg",
-	"kkkkkkkwwwwwwwgggggg",
-	"kkkkkkkwwwwwwDpppppp", # z 5  door row 1
-	"kkkkkkkwwwwwwDpppppp", # z 6  door row 2
-	"kkkkkkkwwwwwwwgggpgg",
-	"kkkkkkkwwwwwwwgggggg",
-	"kkkkkkkwwwwwwwgggggg",
-	"kkkkkkkwwwwwwwgggggg", # z 10 (south, low cut-away wall)
+	"kkkkkkkwwwwwwwgggggrRr", # z 0
+	"kkkkkkkwwwwwwwgggggrrr",
+	"kkkkkkkwwwwwwwgggggrRr",
+	"kkkkkkkwwwwwwwgggggrrr",
+	"kkkkkkkwwwwwwwgggggrRr",
+	"kkkkkkkwwwwwwDppppprrr", # z 5
+	"kkkkkkkwwwwwwDppppprRr",
+	"kkkkkkkwwwwwwwgggpgrrr",
+	"kkkkkkkwwwwwwwgggggrRr",
+	"kkkkkkkwwwwwwwgggggrrr",
+	"kkkkkkkwwwwwwwgggggrRr", # z 10
 ]
 
 const WALL_THICKNESS := 0.4
@@ -37,14 +37,15 @@ const STATIONS := [
 	{"id": &"coffee_machine", "model": "Interact_CoffeeMachine", "cell": Vector2(3, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.4, "bubble": 2.0},
 	{"id": &"fridge", "model": "Interact_Fridge", "cell": Vector2(5, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.9, "bubble": 2.6},
 	{"id": &"trash_can", "model": "Interact_TrashCan", "cell": Vector2(0, 4), "size": Vector2(1, 1), "rot": 90.0, "height": 0.8, "bubble": 1.5},
-	{"id": &"dumpster", "model": "Interact_Dumpster", "cell": Vector2(17, 8), "size": Vector2(2, 1), "rot": 180.0, "height": 1.2, "bubble": 2.0},
+	{"id": &"dumpster", "model": "Interact_Dumpster", "cell": Vector2(16, 8), "size": Vector2(2, 1), "rot": 180.0, "height": 1.2, "bubble": 2.0},
+	{"id": &"stove", "model": "Interact_Stove", "cell": Vector2(2, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0, "bubble": 1.9},
 	# Chores stations. Kitchen: washing machine + sink. Yard: clothesline, mailbox, dog, car. Hall: leash hook.
 	{"id": &"washing_machine", "model": "Interact_WashingMachine", "cell": Vector2(0, 7), "size": Vector2(1, 1), "rot": 90.0, "height": 0.95, "bubble": 1.6},
 	{"id": &"sink", "model": "Interact_Sink", "cell": Vector2(1, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.2, "bubble": 1.9},
 	{"id": &"stain", "model": "Interact_Stain", "cell": Vector2(10, 4.5), "size": Vector2(1, 1), "rot": 0.0, "height": 0.05,
 		"solid": false, "shadow": false, "needed_only": true, "bubble": 1.0},
-	{"id": &"clothesline", "model": "Interact_Clothesline", "cell": Vector2(16, 1), "size": Vector2(2, 1), "rot": 0.0, "height": 1.9, "bubble": 2.5, "solid": false},
-	{"id": &"mailbox", "model": "Interact_Mailbox", "cell": Vector2(19, 4), "size": Vector2(1, 1), "rot": 270.0, "height": 1.2, "bubble": 1.9},
+	{"id": &"clothesline", "model": "Interact_Clothesline", "cell": Vector2(14.5, 1), "size": Vector2(2, 1), "rot": 0.0, "height": 1.9, "bubble": 2.5, "solid": false},
+	{"id": &"mailbox", "model": "Interact_Mailbox", "cell": Vector2(17, 3), "size": Vector2(1, 1), "rot": 270.0, "height": 1.2, "bubble": 1.9},
 	{"id": &"leash_hook", "model": "Interact_LeashHook", "cell": Vector2(13.6, 3), "size": Vector2(0.4, 1), "rot": 270.0, "height": 1.6, "bubble": 2.0, "zone_margin": 1.0},
 	{"id": &"dog", "model": "Interact_Dog", "cell": Vector2(15, 7), "size": Vector2(1, 1), "rot": 0.0, "height": 0.8, "bubble": 1.4},
 	{"id": &"car", "model": "Interact_Car", "cell": Vector2(14, 9), "size": Vector2(2, 1), "rot": 0.0, "height": 1.0, "bubble": 1.8},
@@ -56,9 +57,13 @@ const STATIONS := [
 ## Furniture and decoration without interaction.
 const PROPS := [
 	{"model": "Prop_Counter", "cell": Vector2(0, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
-	{"model": "Prop_Counter", "cell": Vector2(2, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Counter", "cell": Vector2(4, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Counter", "cell": Vector2(6, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
+	{"model": "Prop_DiningTable", "cell": Vector2(3, 7), "size": Vector2(2, 1), "rot": 0.0, "height": 0.8},
+	{"model": "Prop_Chair", "cell": Vector2(3.2, 6.25), "size": Vector2(0.6, 0.6), "rot": 0.0, "height": 1.0},
+	{"model": "Prop_Chair", "cell": Vector2(4.2, 6.25), "size": Vector2(0.6, 0.6), "rot": 0.0, "height": 1.0},
+	{"model": "Prop_Chair", "cell": Vector2(3.2, 8.15), "size": Vector2(0.6, 0.6), "rot": 180.0, "height": 1.0},
+	{"model": "Prop_Chair", "cell": Vector2(4.2, 8.15), "size": Vector2(0.6, 0.6), "rot": 180.0, "height": 1.0},
 	{"model": "Prop_Rug", "cell": Vector2(8, 2.6), "size": Vector2(3, 2), "rot": 0.0, "height": 0.05, "solid": false, "shadow": false},
 	{"model": "Prop_Couch", "cell": Vector2(8, 1), "size": Vector2(3, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_CoffeeTable", "cell": Vector2(9, 3.4), "size": Vector2(1, 1), "rot": 0.0, "height": 0.5},
@@ -72,4 +77,15 @@ const PLAYER_START := Vector2(7, 5)
 const HIDING_SPOTS := [
 	Vector2(2, 2), Vector2(5, 6), Vector2(1, 9), Vector2(12, 2), Vector2(11, 9),
 	Vector2(8, 6), Vector2(16, 2), Vector2(13, 9), Vector2(18, 3),
+]
+
+## The school bus event: the bus drives along the road (x), stops with its door at the end of the yard path,
+## and the kids walk to their chairs. door_z = where each kid leaves the bus / enters the house (row of the door).
+const BUS_ROAD_X := 20.5
+const BUS_START_Z := -8.0
+const BUS_STOP_Z := 4.0
+const BUS_EXIT_Z := 22.0
+const KIDS := [
+	{"id": &"kid_a", "name": "Mia", "model": "Char_Kid_A", "seat": Vector2(3.5, 6.55), "door_z": 5.3},
+	{"id": &"kid_b", "name": "Noah", "model": "Char_Kid_B", "seat": Vector2(4.5, 6.55), "door_z": 5.9},
 ]

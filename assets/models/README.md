@@ -24,5 +24,15 @@ a built-in placeholder, so you can replace models one at a time. No code changes
 | `Prop_CoffeeTable` | 1 x 1 | |
 | `Prop_Rug` | 3 x 2 | flat, no collision |
 | `Prop_TV` | 2 x 1 | TV on its stand |
+| `Interact_Stove` | 1 x 1 | station `stove`; include the counter |
+| `Interact_Sink` | 1 x 1 | station `sink`; include the counter |
+| `Interact_WashingMachine` | 1 x 1 | station `washing_machine` |
+| `Interact_Stain` | 1 x 1 | flat stain on the carpet, shown only while its quest is active |
+| `Interact_Clothesline` | 2 x 1 | station `clothesline` |
+| `Interact_Mailbox` / `Interact_LeashHook` / `Interact_Dog` / `Interact_Car` | 1x1 / 0.4x1 / 1x1 / 2x1 | yard and hall stations |
+| `Prop_DiningTable` | 2 x 1 | |
+| `Prop_Chair` | 0.6 x 0.6 | back towards -Z |
+| `Prop_Bus` | 2.2 x 5 | the school bus; front towards +Z, door on the -X side |
+| `Char_Kid_A` / `Char_Kid_B` | child, ~1.0 m | optional child nodes `LegL`/`LegR` (hip pivot), `KneeL`/`KneeR`, `ArmL`/`ArmR` get the walk and sit animation |
 
 Where each one stands is set in `scripts/world3d/HouseLayout.gd` (cell, size, rotation).
