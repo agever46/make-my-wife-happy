@@ -5,6 +5,10 @@
 - Work at a station: HOLD E or Space. Tap E / Space: pick up or drop an item.
 - Esc: pause. Enter: restart after the day ends. F1, ` or typing `debug`: debug console.
 
+## Camera
+- The camera follows the husband and stays inside the map. **Mouse wheel** or **+ / -** zooms (distance 8 to 25, default 15); the level is remembered in `user://settings.cfg`.
+- Debug console: `zoom <8-25>`. Settings are in `scripts/world3d/CameraRig.gd` (`default_distance`, `follow_speed`, `look_ahead_north`).
+
 ## Mouse (player 1, works together with the keyboard)
 - **Left click on the floor:** walk there. Hold and drag to follow the cursor.
 - **Left click on a station / kid / wife:** walk there and work until the step is done (no need to hold anything).

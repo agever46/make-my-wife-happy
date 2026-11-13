@@ -24,6 +24,7 @@ const HELP := {
 	"tp": "tp <station id>  or  tp <x> <z>  - teleport player 1 (see station ids in HouseLayout.gd, e.g. stove kid_a kid_b coffee_machine fridge sink washing_machine trash_can dumpster wife mailbox dog car clothesline leash_hook stain)",
 	"give": "give <item>  - put an item in player 1's hands (coffee coffee_milk trash_bag keys laundry mail leash grocery_bag sponge remote ingredients dinner_plate water ketchup cookie toy)",
 	"speed": "speed <m/s>  - player 1 walking speed (default 5.4)",
+	"zoom": "zoom <8-25>  - camera distance (smaller = closer; mouse wheel or + / - also work)",
 	"timescale": "timescale <x>  - game speed (1 = normal)",
 	"close": "close  - close the console",
 }
@@ -200,6 +201,7 @@ func execute(line: String) -> void:
 		"tp": _cmd_tp(args)
 		"give": _cmd_give(args)
 		"speed": _cmd_speed(args)
+		"zoom": _cmd_zoom(args)
 		"timescale": _cmd_timescale(args)
 		"close": close()
 		_: _error("Unknown command '%s'. Type help." % cmd)
@@ -330,6 +332,15 @@ func _cmd_speed(args: PackedStringArray) -> void:
 		return
 	player.max_speed = clampf(args[0].to_float(), 0.5, 30.0)
 	_print("speed = %.1f m/s" % player.max_speed)
+
+
+func _cmd_zoom(args: PackedStringArray) -> void:
+	var rig := get_tree().current_scene.find_child("CameraRig", true, false) as CameraRig
+	if rig == null or args.size() < 1 or not args[0].is_valid_float():
+		_error("usage: zoom <8-25>")
+		return
+	rig.set_distance(args[0].to_float())
+	_print("camera distance = %.1f" % args[0].to_float())
 
 
 func _cmd_timescale(args: PackedStringArray) -> void:
