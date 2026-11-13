@@ -30,6 +30,7 @@ static func make(model_name: String) -> Node3D:
 		"Interact_Dog": _dog(root)
 		"Interact_Car": _car(root)
 		"Interact_Stove": _stove(root)
+		"Interact_ToyBox": _toy_box(root)
 		"Prop_DiningTable": _dining_table(root)
 		"Prop_Chair": _chair(root)
 		"Prop_Bus": _bus(root)
@@ -340,3 +341,11 @@ static func _kid(r: Node3D, shirt: Color, hair: Color, pigtails: bool) -> void:
 	if pigtails:
 		box(head, "PigtailL", Vector3(0.12, 0.3, 0.12), Vector3(-0.27, 0.0, 0.0), hair, 0.04)
 		box(head, "PigtailR", Vector3(0.12, 0.3, 0.12), Vector3(0.27, 0.0, 0.0), hair, 0.04)
+
+
+static func _toy_box(r: Node3D) -> void:
+	box(r, "Box", Vector3(0.9, 0.5, 0.7), Vector3.ZERO, Color(0.35, 0.6, 0.9), 0.07)
+	box(r, "Rim", Vector3(0.96, 0.08, 0.76), Vector3(0, 0.5, 0), Color(0.25, 0.45, 0.8), 0.03)
+	box(r, "BlockA", Vector3(0.22, 0.22, 0.22), Vector3(-0.2, 0.58, 0.0), Color(0.95, 0.4, 0.4), 0.04)
+	box(r, "BlockB", Vector3(0.2, 0.2, 0.2), Vector3(0.12, 0.58, 0.1), Color(0.98, 0.85, 0.3), 0.04)
+	box(r, "BlockC", Vector3(0.18, 0.18, 0.18), Vector3(0.0, 0.78, -0.05), Color(0.5, 0.85, 0.5), 0.04)

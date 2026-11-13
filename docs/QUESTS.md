@@ -41,7 +41,13 @@ New quest = one entry in `QuestDB.gd` (+ stations in `HouseLayout.gd` and item i
 - Dinner for each kid: fridge (ingredients) -> stove (cook, hold 3.5 s) -> serve the kid. A plate appears on the table.
 - While the kids are home they also make random requests (quests with `requires = kids_home`): water (sink), ketchup / cookie (fridge), lost toy duck (hidden in the house). Each kid has its own set.
 - Quest fields: `requires` (needs a flag), `event_only` (never picked at random), `kid` (which kid reacts when it is done).
-- A day is 150 s now. Debug: `bus` calls the bus immediately.
+- **Playtime:** when both dinner orders are over (served or ruined), `EventManager` sets `kids_at_table = false`, `kids_playing = true`
+  and emits `kids_play_requested`. The kids stand up and run between `HouseLayout.PLAY_POINTS` in the living room, hopping and playing in place.
+  A kid stops running while a player stands next to it, so it can be reached.
+- Playtime quests (`requires = kids_playing`): `play_a` / `play_b` (hold interact next to the kid for 4 s) and `tidy` (a toy lies somewhere -> the toy box in the living room).
+  Ketchup only makes sense at the table (`requires = kids_at_table`); water, cookie and the lost duck work in both phases.
+- When two quests could use the same station, the step that uses the item in the player's hands wins over a step that needs nothing (so delivering water beats "play").
+- A day is 150 s now. Debug: `bus` calls the bus immediately, `play` ends dinner and starts playtime.
 
 ## Older notes on the first three quests
 coffee (machine -> fridge for milk -> wife), trash (trash can -> dumpster outside), keys (find the keys at a random

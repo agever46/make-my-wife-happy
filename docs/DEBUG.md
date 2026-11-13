@@ -14,6 +14,7 @@ The game is paused while it is open. Up / Down = command history, Tab = complete
 | `quest <coffee\|trash\|keys\|random>` | start a quest right now |
 | `quests` / `clear` | list active quests / remove them all (no reward, no penalty) |
 | `bus` | call the school bus now (kids arrive, dinner orders start) |
+| `play` | end dinner now: the kids go play in the living room |
 | `win` / `lose` / `restart` | end the day with victory / game over / start a new day |
 | `god [on\|off]` | the Wife-O-Meter can not drop |
 | `tp <station>` or `tp <x> <z>` | teleport player 1 (stations: coffee_machine fridge trash_can dumpster wife) |

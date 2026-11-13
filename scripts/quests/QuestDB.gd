@@ -45,6 +45,12 @@ static func all() -> Array[QuestData]:
 	remote.spawn_item = &"remote"
 	list.append(remote)
 	list.append_array(_kid_quests())
+	var tidy := _quest(&"tidy", "The toys are EVERYWHERE!", 34.0, [
+		_step(&"toy_box", "Put the toy in the toy box", 0.5, &"toy"),
+	], &"toy")
+	tidy.spawn_item = &"toy"
+	tidy.requires = &"kids_playing"
+	list.append(tidy)
 	return list
 
 
@@ -75,6 +81,16 @@ static func _kid_quests() -> Array[QuestData]:
 			_step(&"fridge", "Get the ketchup", 0.6, &"", &"ketchup"),
 			_step(k, "Give it to %s" % who, 0.4, &"ketchup"),
 		], &"ketchup")
+		ketchup.requires = &"kids_at_table" # only makes sense at the table; the loop below would reset it
+		var play := _quest(StringName("play_" + suffix), "%s: PLAY WITH ME!" % who, 32.0, [
+			_step(k, "Play with %s (hold!)" % who, 4.0),
+		], &"toy")
+		play.requires = &"kids_playing"
+		play.kid = k
+		play.reward_money = 12
+		play.reward_happiness = 10.0
+		play.fail_penalty = 10.0
+		out.append(play)
 		var cookie := _quest(StringName("cookie_" + suffix), "%s: can I have a cookie?" % who, 28.0, [
 			_step(&"fridge", "Find a cookie in the fridge", 0.6, &"", &"cookie"),
 			_step(k, "Give it to %s" % who, 0.4, &"cookie"),
@@ -84,7 +100,8 @@ static func _kid_quests() -> Array[QuestData]:
 		], &"toy")
 		toy.spawn_item = &"toy"
 		for q in [water, ketchup, cookie, toy]:
-			q.requires = &"kids_home"
+			if q.requires == &"":
+				q.requires = &"kids_home"
 			q.kid = k
 			q.reward_money = 8
 			q.reward_happiness = 8.0

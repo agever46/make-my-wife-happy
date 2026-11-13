@@ -49,6 +49,7 @@ const STATIONS := [
 	{"id": &"leash_hook", "model": "Interact_LeashHook", "cell": Vector2(13.6, 3), "size": Vector2(0.4, 1), "rot": 270.0, "height": 1.6, "bubble": 2.0, "zone_margin": 1.0},
 	{"id": &"dog", "model": "Interact_Dog", "cell": Vector2(15, 7), "size": Vector2(1, 1), "rot": 0.0, "height": 0.8, "bubble": 1.4},
 	{"id": &"car", "model": "Interact_Car", "cell": Vector2(14, 9), "size": Vector2(2, 1), "rot": 0.0, "height": 1.0, "bubble": 1.8},
+	{"id": &"toy_box", "model": "Interact_ToyBox", "cell": Vector2(12, 9), "size": Vector2(1, 1), "rot": 0.0, "height": 0.6, "bubble": 1.4},
 	# The wife sits on the couch. No collider of her own (the couch is solid); her zone reaches the floor in front of it.
 	{"id": &"wife", "model": "Char_Wife", "cell": Vector2(9, 1.1), "size": Vector2(1, 1), "rot": 0.0, "height": 1.5, "bubble": 2.2,
 		"solid": false, "shadow": false, "zone_margin": 1.3, "script": "wife"},
@@ -88,4 +89,10 @@ const BUS_EXIT_Z := 22.0
 const KIDS := [
 	{"id": &"kid_a", "name": "Mia", "model": "Char_Kid_A", "seat": Vector2(3.5, 6.55), "door_z": 5.3},
 	{"id": &"kid_b", "name": "Noah", "model": "Char_Kid_B", "seat": Vector2(4.5, 6.55), "door_z": 5.9},
+]
+
+## Where the kids run around and play after dinner (living room, away from the furniture).
+const PLAY_POINTS := [
+	Vector2(11.7, 2.6), Vector2(12.6, 4.2), Vector2(11.9, 6.3), Vector2(12.4, 8.2),
+	Vector2(10.9, 9.2), Vector2(9.0, 9.3), Vector2(8.3, 8.4), Vector2(8.4, 5.8), Vector2(11.2, 5.6),
 ]

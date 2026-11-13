@@ -15,6 +15,7 @@ const HELP := {
 	"quest": "quest <id|random>  - start a quest now (ids: see quests)",
 	"quests": "quests  - list active quests and quest ids",
 	"bus": "bus  - call the school bus now (kids arrive, dinner orders start)",
+	"play": "play  - end dinner now: the kids go play in the living room",
 	"clear": "clear  - remove all quests (no reward, no penalty)",
 	"win": "win  - finish the day now (victory)",
 	"lose": "lose  - game over now",
@@ -180,6 +181,9 @@ func execute(line: String) -> void:
 		"bus":
 			EventManager.call_bus()
 			_print("Bus called.")
+		"play":
+			EventManager.start_playtime()
+			_print("Playtime." if EventManager.kids_playing else "The kids are not home yet (use bus).")
 		"clear":
 			QuestManager.clear_quests()
 			_print("All quests removed.")

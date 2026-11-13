@@ -112,19 +112,29 @@ func start_quest(data: QuestData) -> ActiveQuest:
 ##   give      item id the player must receive (only when done), &"" for none
 ##   quest_uid uid of the quest, so the world can tag a given item for cleanup
 func try_work(station_id: StringName, held_item: StringName, delta: float) -> Dictionary:
+	# Prefer a step that uses the item in the hands over one that needs nothing (e.g. "play with the kid").
+	var chosen: ActiveQuest = null
 	for quest in active:
 		var step := quest.step()
 		if not _step_can_run(step, station_id, held_item):
 			continue
-		var needs: StringName = step.get("needs", &"")
-		var gives: StringName = step.get("gives", &"")
-		quest.work_done += delta
-		var work: float = step.get("work", 0.5)
-		if quest.work_done >= work:
-			_advance(quest)
-			return {"progress": 1.0, "done": true, "consume": needs != &"", "give": gives, "quest_uid": quest.uid}
-		return {"progress": quest.work_done / work, "done": false, "consume": false, "give": &"", "quest_uid": quest.uid}
-	return {}
+		if step.get("needs", &"") != &"":
+			chosen = quest
+			break
+		if chosen == null:
+			chosen = quest
+	if chosen == null:
+		return {}
+	var quest := chosen
+	var step := quest.step()
+	var needs: StringName = step.get("needs", &"")
+	var gives: StringName = step.get("gives", &"")
+	quest.work_done += delta
+	var work: float = step.get("work", 0.5)
+	if quest.work_done >= work:
+		_advance(quest)
+		return {"progress": 1.0, "done": true, "consume": needs != &"", "give": gives, "quest_uid": quest.uid}
+	return {"progress": quest.work_done / work, "done": false, "consume": false, "give": &"", "quest_uid": quest.uid}
 
 
 ## True if some active quest could make progress at this station with this held item.

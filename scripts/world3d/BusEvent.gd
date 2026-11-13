@@ -13,6 +13,7 @@ func _ready() -> void:
 	EventManager.bus_arrival_requested.connect(_on_bus_arrival)
 	EventManager.bus_departure_requested.connect(_on_bus_departure)
 	EventManager.event_reset.connect(_clear)
+	EventManager.kids_play_requested.connect(_on_playtime)
 
 
 func _on_bus_arrival() -> void:
@@ -56,6 +57,14 @@ func _on_kid_seated() -> void:
 	_seated += 1
 	if _seated >= HouseLayout.KIDS.size():
 		EventManager.kids_seated()
+
+
+func _on_playtime() -> void:
+	var delay := 0.0
+	for kid in _kids:
+		if is_instance_valid(kid):
+			kid.leave_table(delay)
+			delay += 0.7
 
 
 func _on_bus_departure() -> void:
