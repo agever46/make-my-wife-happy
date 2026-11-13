@@ -100,7 +100,10 @@ func _physics_process(delta: float) -> void:
 func _animate(delta: float) -> void:
 	var speed := velocity.length()
 	var t := clampf(speed / max_speed, 0.0, 1.0)
+	var step_before := floori(_phase / PI)
 	_phase += TAU * speed / stride_length * delta
+	if speed > 0.5 and floori(_phase / PI) != step_before:
+		Sfx.footstep()
 	var swing := sin(_phase) * 0.75 * t
 	if _legs.size() == 2:
 		_legs[0].rotation.x = swing
@@ -130,6 +133,7 @@ func give_item(item: Item3D) -> void:
 	item.position = Vector3.ZERO
 	item.holder = self
 	held_item = item
+	Sfx.pickup()
 
 
 func drop_item() -> void:
@@ -143,6 +147,7 @@ func drop_item() -> void:
 	item.reparent(root if root != null else get_parent(), false)
 	var forward := Vector3(sin(_visual.rotation.y), 0.0, cos(_visual.rotation.y))
 	item.global_position = Vector3(global_position.x, 0.0, global_position.z) + forward * 0.7
+	Sfx.drop()
 
 
 func consume_item() -> void:
@@ -153,6 +158,7 @@ func consume_item() -> void:
 
 func _update_interaction(delta: float) -> void:
 	if not GameManager.is_playing():
+		Sfx.set_working(self, false)
 		return
 	var action := _prefix + "interact"
 	if Input.is_action_pressed(action):
@@ -160,10 +166,12 @@ func _update_interaction(delta: float) -> void:
 		if station != null:
 			var result := QuestManager.try_work(station.station_id, held_item_id(), delta)
 			if not result.is_empty():
+				Sfx.set_working(self, not result["done"])
 				station.show_progress(result["progress"])
 				if result["done"]:
 					_apply_result(result)
 				return
+	Sfx.set_working(self, false)
 	if Input.is_action_just_pressed(action):
 		if is_instance_valid(held_item):
 			drop_item()
