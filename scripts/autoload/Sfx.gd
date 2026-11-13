@@ -7,10 +7,13 @@ const DIR := "res://audio/"
 const WARN_RATIO := 0.25        # below this share of the Wife-O-Meter the warning pulse starts
 const WARN_EVERY := 3.0         # seconds between warning pulses
 const MAX_VOICES := 12
+const MUSIC_DB := -16.0         # the background music sits well under the effects
 
 var _cache := {}
 var _voices: Array[AudioStreamPlayer] = []
 var _loop: AudioStreamPlayer
+var _music: AudioStreamPlayer
+var _music_tween: Tween
 var _workers := {}              # player instance id -> true while that player works at a station
 var _warn_clock := 0.0
 
@@ -24,9 +27,13 @@ func _ready() -> void:
 	_loop = AudioStreamPlayer.new()
 	_loop.volume_db = -8.0
 	add_child(_loop)
+	_music = AudioStreamPlayer.new()
+	_music.volume_db = MUSIC_DB
+	add_child(_music)
+	GameManager.game_started.connect(start_music)
 	GameManager.happiness_changed.connect(_on_happiness_changed)
-	GameManager.day_won.connect(func(_stars: int, _score: int): _stop_work(); play("day_win"))
-	GameManager.game_over.connect(func(_score: int): _stop_work(); play("game_over"))
+	GameManager.day_won.connect(func(_stars: int, _score: int): _stop_work(); stop_music(); play("day_win"))
+	GameManager.game_over.connect(func(_score: int): _stop_work(); stop_music(); play("game_over"))
 	GameManager.game_paused.connect(func(): play("ui_click"))
 	GameManager.game_resumed.connect(func(): play("ui_click"))
 	GameManager.money_changed.connect(func(new_value: int, old_value: int):
@@ -56,6 +63,29 @@ func play(id: String, volume_db: float = 0.0, pitch_jitter: float = 0.0) -> void
 	voice.volume_db = volume_db
 	voice.pitch_scale = 1.0 + randf_range(-pitch_jitter, pitch_jitter)
 	voice.play()
+
+
+## The background music (audio/music_day.ogg), looped; it starts with the day and fades out when the day ends.
+func start_music() -> void:
+	var stream := _stream("music_day")
+	if stream == null:
+		return
+	if "loop" in stream:
+		stream = stream.duplicate()
+		stream.loop = true
+	if _music_tween != null and _music_tween.is_valid():
+		_music_tween.kill()      # a restart during the fade-out must not be stopped by it
+	_music.stream = stream
+	_music.volume_db = MUSIC_DB
+	_music.play()
+
+
+func stop_music(fade := 1.5) -> void:
+	if not _music.playing:
+		return
+	_music_tween = create_tween()
+	_music_tween.tween_property(_music, "volume_db", -60.0, fade)
+	_music_tween.tween_callback(_music.stop)
 
 
 func pickup() -> void:
