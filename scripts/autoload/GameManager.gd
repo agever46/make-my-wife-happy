@@ -22,7 +22,7 @@ enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, VICTORY }
 const MAX_HAPPINESS := 100.0
 const START_HAPPINESS := 60.0
 ## Length of one day in seconds. Survive it to win.
-const DAY_LENGTH := 150.0
+const DAY_LENGTH := 180.0
 ## Wife-O-Meter needed at the end of the day for 2 / 3 stars (1 star for just surviving).
 const STARS_2_AT := 40.0
 const STARS_3_AT := 70.0

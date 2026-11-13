@@ -39,6 +39,11 @@ const STATIONS := [
 	{"id": &"trash_can", "model": "Interact_TrashCan", "cell": Vector2(0, 4), "size": Vector2(1, 1), "rot": 90.0, "height": 0.8, "bubble": 1.5},
 	{"id": &"dumpster", "model": "Interact_Dumpster", "cell": Vector2(16, 8), "size": Vector2(2, 1), "rot": 180.0, "height": 1.2, "bubble": 2.0},
 	{"id": &"stove", "model": "Interact_Stove", "cell": Vector2(2, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0, "bubble": 1.9},
+	# Cooking: the wife cooks at the stove; the husband fetches ingredients from the pantry, the fridge and the garden.
+	{"id": &"pantry", "model": "Interact_Pantry", "cell": Vector2(6, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.7, "bubble": 2.3},
+	{"id": &"tomato_bed", "model": "Interact_TomatoBed", "cell": Vector2(14, 2.9), "size": Vector2(1, 0.7), "rot": 0.0, "height": 0.5, "bubble": 1.4, "zone_margin": 0.9},
+	{"id": &"carrot_bed", "model": "Interact_CarrotBed", "cell": Vector2(15.3, 2.9), "size": Vector2(0.9, 0.7), "rot": 0.0, "height": 0.5, "bubble": 1.4, "zone_margin": 0.9},
+	{"id": &"herb_bed", "model": "Interact_HerbBed", "cell": Vector2(14, 4.35), "size": Vector2(1, 0.6), "rot": 0.0, "height": 0.5, "bubble": 1.4, "zone_margin": 0.9},
 	# Chores stations. Kitchen: washing machine + sink. Yard: clothesline, mailbox, dog, car. Hall: leash hook.
 	{"id": &"washing_machine", "model": "Interact_WashingMachine", "cell": Vector2(0, 7), "size": Vector2(1, 1), "rot": 90.0, "height": 0.95, "bubble": 1.6},
 	{"id": &"sink", "model": "Interact_Sink", "cell": Vector2(1, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.2, "bubble": 1.9},
@@ -59,7 +64,6 @@ const STATIONS := [
 const PROPS := [
 	{"model": "Prop_Counter", "cell": Vector2(0, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Counter", "cell": Vector2(4, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
-	{"model": "Prop_Counter", "cell": Vector2(6, 0), "size": Vector2(1, 1), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_DiningTable", "cell": Vector2(3, 7), "size": Vector2(2, 1), "rot": 0.0, "height": 0.8},
 	{"model": "Prop_Chair", "cell": Vector2(3.2, 6.25), "size": Vector2(0.6, 0.6), "rot": 0.0, "height": 1.0},
 	{"model": "Prop_Chair", "cell": Vector2(4.2, 6.25), "size": Vector2(0.6, 0.6), "rot": 0.0, "height": 1.0},
@@ -96,3 +100,12 @@ const PLAY_POINTS := [
 	Vector2(11.7, 2.6), Vector2(12.6, 4.2), Vector2(11.9, 6.3), Vector2(12.4, 8.2),
 	Vector2(10.9, 9.2), Vector2(9.0, 9.3), Vector2(8.3, 8.4), Vector2(8.4, 5.8), Vector2(11.2, 5.6),
 ]
+
+## Where the wife cooks, and the places she walks to while serving dinner (see Wife3D.gd).
+const WIFE_COUCH := Vector3(9.5, 0.0, 1.6)
+const WIFE_STOVE := Vector3(2.5, 0.0, 1.5)
+const WIFE_TABLE := Vector3(2.35, 0.0, 7.5)
+## Path from the couch to the stove and back (through the opening of the half wall at x = 7).
+const WIFE_PATH_TO_STOVE := [Vector3(9.5, 0.0, 2.5), Vector3(8.3, 0.0, 3.5), Vector3(6.3, 0.0, 3.7), Vector3(3.6, 0.0, 2.6), Vector3(2.5, 0.0, 1.5)]
+const WIFE_PATH_TO_TABLE := [Vector3(2.0, 0.0, 3.2), Vector3(2.0, 0.0, 6.0), Vector3(2.35, 0.0, 7.5)]
+const WIFE_PATH_TO_COUCH := [Vector3(2.0, 0.0, 6.0), Vector3(2.4, 0.0, 3.8), Vector3(6.3, 0.0, 3.7), Vector3(8.3, 0.0, 3.5), Vector3(9.5, 0.0, 2.5), Vector3(9.5, 0.0, 1.6)]

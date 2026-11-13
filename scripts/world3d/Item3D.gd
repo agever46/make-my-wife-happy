@@ -20,6 +20,11 @@ const ICONS := {
 	&"ketchup": preload("res://assets/items/ketchup.png"),
 	&"cookie": preload("res://assets/items/cookie.png"),
 	&"toy": preload("res://assets/items/toy.png"),
+	&"pasta": preload("res://assets/items/pasta.png"),
+	&"tomato": preload("res://assets/items/tomato.png"),
+	&"carrot": preload("res://assets/items/carrot.png"),
+	&"basil": preload("res://assets/items/basil.png"),
+	&"cheese": preload("res://assets/items/cheese.png"),
 }
 const PIXEL_SIZE := 0.0045
 

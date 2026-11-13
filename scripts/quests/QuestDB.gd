@@ -45,6 +45,7 @@ static func all() -> Array[QuestData]:
 	remote.spawn_item = &"remote"
 	list.append(remote)
 	list.append_array(_kid_quests())
+	list.append_array(_cooking_quests())
 	var tidy := _quest(&"tidy", "The toys are EVERYWHERE!", 34.0, [
 		_step(&"toy_box", "Put the toy in the toy box", 0.5, &"toy"),
 	], &"toy")
@@ -54,25 +55,13 @@ static func all() -> Array[QuestData]:
 	return list
 
 
-## Orders from the two kids at the dinner table. Dinner is started by the bus event; the small requests are random.
+## Requests of the two kids (random while they are home).
 static func _kid_quests() -> Array[QuestData]:
 	var out: Array[QuestData] = []
 	for kid in [[&"kid_a", "a", "Mia"], [&"kid_b", "b", "Noah"]]:
 		var k: StringName = kid[0]
 		var suffix: String = kid[1]
 		var who: String = kid[2]
-		var dinner := _quest(StringName("dinner_" + suffix), "Dinner for %s!" % who, 70.0, [
-			_step(&"fridge", "Get ingredients from the fridge", 1.0, &"", &"ingredients"),
-			_step(&"stove", "Cook it on the stove (hold!)", 3.5, &"ingredients", &"dinner_plate"),
-			_step(k, "Serve %s" % who, 0.5, &"dinner_plate"),
-		], &"dinner_plate")
-		dinner.event_only = true
-		dinner.requires = &"kids_home"
-		dinner.reward_happiness = 16.0
-		dinner.reward_money = 25
-		dinner.fail_penalty = 22.0
-		dinner.kid = k
-		out.append(dinner)
 		var water := _quest(StringName("water_" + suffix), "%s: I need WATER!" % who, 26.0, [
 			_step(&"sink", "Fill a glass at the sink", 1.0, &"", &"water"),
 			_step(k, "Give it to %s" % who, 0.4, &"water"),
@@ -123,3 +112,27 @@ static func _quest(id: StringName, title: String, patience: float, steps: Array,
 
 static func _step(station: StringName, text: String, work: float, needs: StringName = &"", gives: StringName = &"") -> Dictionary:
 	return {"station": station, "text": text, "work": work, "needs": needs, "gives": gives}
+
+
+## The wife cooks dinner and asks the husband for ingredients. Started one after another by EventManager.
+static func _cooking_quests() -> Array[QuestData]:
+	var out: Array[QuestData] = []
+	var items := [
+		[&"cook_pasta", "Mom: I need PASTA!", &"pantry", "Get the pasta from the pantry", 0.8, &"pasta"],
+		[&"cook_tomato", "Mom: fresh TOMATOES from the garden!", &"tomato_bed", "Pick tomatoes in the garden (hold!)", 1.6, &"tomato"],
+		[&"cook_carrot", "Mom: one CARROT. Just one.", &"carrot_bed", "Pull a carrot in the garden (hold!)", 1.4, &"carrot"],
+		[&"cook_basil", "Mom: BASIL! Quick!", &"herb_bed", "Cut basil in the garden", 1.0, &"basil"],
+		[&"cook_cheese", "Mom: cheese, from the fridge!", &"fridge", "Get the cheese from the fridge", 0.6, &"cheese"],
+	]
+	for it in items:
+		var q := _quest(it[0], it[1], 40.0, [
+			_step(it[2], it[3], it[4], &"", it[5]),
+			_step(&"wife", "Bring it to her", 0.3, it[5]),
+		], it[5])
+		q.event_only = true
+		q.requires = &"cooking"
+		q.reward_money = 10
+		q.reward_happiness = 6.0
+		q.fail_penalty = 10.0
+		out.append(q)
+	return out

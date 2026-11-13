@@ -230,15 +230,14 @@ var _walk_paused_resume := false
 func _on_quest_completed(quest: ActiveQuest) -> void:
 	if quest.data.kid != station_id or mode == Mode.ARRIVING:
 		return
-	if String(quest.data.id).begins_with("dinner"):
-		_show_plate()
 	# Cheer: a happy squash and stretch.
 	var tw := create_tween().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	tw.tween_property(visual_root, "scale", Vector3(0.9, 1.2, 0.9), 0.08)
 	tw.tween_property(visual_root, "scale", Vector3.ONE, 0.6)
 
 
-func _show_plate() -> void:
+## The wife puts dinner in front of this kid (called by Wife3D when she serves).
+func show_plate() -> void:
 	if _plate != null:
 		return
 	_plate = Node3D.new()

@@ -17,7 +17,7 @@ a built-in placeholder, so you can replace models one at a time. No code changes
 | `Interact_CoffeeMachine` | 1 x 1 | station `coffee_machine`; include the counter it stands on |
 | `Interact_TrashCan` | 1 x 1 | station `trash_can` |
 | `Interact_Dumpster` | 2 x 1 | station `dumpster` |
-| `Char_Wife` | seated, ~1 x 1 | station `wife`; optional child nodes `Skull`, `BrowL`, `BrowR` get mood animation |
+| `Char_Wife` | standing, ~1.7 m, front +Z | station `wife`. She sits on the couch AND walks / cooks, so model her standing with pivots `LegL`/`LegR` (hip), `KneeL`/`KneeR`, `ArmL`/`ArmR` (shoulder); the couch pose is made by rotating them. Optional `Skull`, `BrowL`, `BrowR` get the mood animation |
 | `Char_Husband` | standing | the player; optional child nodes `LegL`, `LegR`, `ArmL`, `ArmR` (pivot at hip / shoulder) get the walk swing |
 | `Prop_Counter` | 1 x 1 | kitchen counter |
 | `Prop_Couch` | 3 x 1 | back towards -Z |
@@ -31,6 +31,8 @@ a built-in placeholder, so you can replace models one at a time. No code changes
 | `Interact_Clothesline` | 2 x 1 | station `clothesline` |
 | `Interact_Mailbox` / `Interact_LeashHook` / `Interact_Dog` / `Interact_Car` | 1x1 / 0.4x1 / 1x1 / 2x1 | yard and hall stations |
 | `Interact_ToyBox` | 1 x 1 | station `toy_box` |
+| `Interact_Pantry` | 1 x 1 | station `pantry` (pasta) |
+| `Interact_TomatoBed` / `Interact_CarrotBed` / `Interact_HerbBed` | 1x0.7 / 0.9x0.7 / 1x0.6 | garden beds in the yard |
 | `Prop_DiningTable` | 2 x 1 | |
 | `Prop_Chair` | 0.6 x 0.6 | back towards -Z |
 | `Prop_Bus` | 2.2 x 5 | the school bus; front towards +Z, door on the -X side |

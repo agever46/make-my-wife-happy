@@ -31,6 +31,10 @@ static func make(model_name: String) -> Node3D:
 		"Interact_Car": _car(root)
 		"Interact_Stove": _stove(root)
 		"Interact_ToyBox": _toy_box(root)
+		"Interact_Pantry": _pantry(root)
+		"Interact_TomatoBed": _garden_bed(root, Vector2(1.0, 0.7), "tomato")
+		"Interact_CarrotBed": _garden_bed(root, Vector2(0.9, 0.7), "carrot")
+		"Interact_HerbBed": _garden_bed(root, Vector2(1.0, 0.6), "herb")
 		"Prop_DiningTable": _dining_table(root)
 		"Prop_Chair": _chair(root)
 		"Prop_Bus": _bus(root)
@@ -102,16 +106,21 @@ static func _husband(r: Node3D) -> void:
 
 
 static func _wife(r: Node3D) -> void:
+	# Standing, posable like the kids: hip pivots (LegL / LegR) with knees, shoulder pivots (ArmL / ArmR).
+	# The couch pose and the walking / stirring animations are done by rotating these pivots (see Wife3D.gd).
 	var jeans := Color(0.2, 0.26, 0.4)
+	var top := Color(0.2, 0.62, 0.6)
 	for side in [-1.0, 1.0]:
-		box(r, "Thigh", Vector3(0.16, 0.14, 0.42), Vector3(side * 0.11, 0.42, 0.2), jeans, 0.04)
-		box(r, "Shin", Vector3(0.14, 0.44, 0.14), Vector3(side * 0.11, 0.0, 0.44), jeans, 0.04)
-		box(r, "Foot", Vector3(0.14, 0.06, 0.2), Vector3(side * 0.11, 0.0, 0.5), SKIN, 0.02)
-		var arm := pivot(r, "ArmL" if side < 0.0 else "ArmR", Vector3(side * 0.28, 1.0, -0.02))
-		box(arm, "Sleeve", Vector3(0.14, 0.34, 0.16), Vector3(0, -0.34, 0.04), Color(0.2, 0.62, 0.6))
-		box(arm, "Hand", Vector3(0.11, 0.1, 0.14), Vector3(0, -0.44, 0.14), SKIN, 0.03)
-	box(r, "Torso", Vector3(0.46, 0.5, 0.26), Vector3(0, 0.56, -0.05), Color(0.2, 0.62, 0.6), 0.06)
-	var head := pivot(r, "Head", Vector3(0, 1.08, -0.02))
+		var leg := pivot(r, "LegL" if side < 0.0 else "LegR", Vector3(side * 0.1, 0.78, 0.0))
+		box(leg, "Thigh", Vector3(0.16, 0.38, 0.18), Vector3(0, -0.38, 0), jeans, 0.04)
+		var knee := pivot(leg, "KneeL" if side < 0.0 else "KneeR", Vector3(0, -0.38, 0))
+		box(knee, "Shin", Vector3(0.14, 0.28, 0.16), Vector3(0, -0.28, 0), jeans, 0.04)
+		box(knee, "Shoe", Vector3(0.15, 0.1, 0.26), Vector3(0, -0.38, 0.04), Color(0.95, 0.95, 0.95), 0.04)
+		var arm := pivot(r, "ArmL" if side < 0.0 else "ArmR", Vector3(side * 0.29, 1.24, 0.0))
+		box(arm, "Sleeve", Vector3(0.13, 0.22, 0.15), Vector3(0, -0.22, 0), top, 0.04)
+		box(arm, "Forearm", Vector3(0.11, 0.28, 0.13), Vector3(0, -0.5, 0), SKIN, 0.03)
+	box(r, "Torso", Vector3(0.44, 0.5, 0.25), Vector3(0, 0.78, 0), top, 0.06)
+	var head := pivot(r, "Head", Vector3(0, 1.3, 0))
 	box(head, "Skull", Vector3(0.32, 0.3, 0.29), Vector3.ZERO, SKIN, 0.06)
 	box(head, "Hair", Vector3(0.34, 0.12, 0.31), Vector3(0, 0.26, -0.01), HAIR, 0.04)
 	box(head, "Bun", Vector3(0.15, 0.15, 0.15), Vector3(0, 0.34, -0.1), HAIR, 0.05)
@@ -120,7 +129,6 @@ static func _wife(r: Node3D) -> void:
 	box(head, "BrowL", Vector3(0.09, 0.025, 0.02), Vector3(-0.075, 0.21, 0.15), HAIR, 0.008)
 	box(head, "BrowR", Vector3(0.09, 0.025, 0.02), Vector3(0.075, 0.21, 0.15), HAIR, 0.008)
 	box(head, "Mouth", Vector3(0.09, 0.025, 0.02), Vector3(0, 0.05, 0.15), Color(0.7, 0.2, 0.25), 0.008)
-	box(r, "Remote", Vector3(0.06, 0.03, 0.18), Vector3(-0.28, 0.58, 0.28), Color(0.1, 0.1, 0.12), 0.01)
 
 
 # --- stations ----------------------------------------------------------------
@@ -349,3 +357,38 @@ static func _toy_box(r: Node3D) -> void:
 	box(r, "BlockA", Vector3(0.22, 0.22, 0.22), Vector3(-0.2, 0.58, 0.0), Color(0.95, 0.4, 0.4), 0.04)
 	box(r, "BlockB", Vector3(0.2, 0.2, 0.2), Vector3(0.12, 0.58, 0.1), Color(0.98, 0.85, 0.3), 0.04)
 	box(r, "BlockC", Vector3(0.18, 0.18, 0.18), Vector3(0.0, 0.78, -0.05), Color(0.5, 0.85, 0.5), 0.04)
+
+
+# --- cooking: pantry and garden ------------------------------------------------------
+
+static func _pantry(r: Node3D) -> void:
+	var wood := Color(0.72, 0.5, 0.32)
+	box(r, "Body", Vector3(0.9, 1.7, 0.55), Vector3.ZERO, wood, 0.05)
+	box(r, "DoorL", Vector3(0.42, 0.9, 0.04), Vector3(-0.22, 0.1, 0.29), Color(0.82, 0.6, 0.4), 0.02)
+	box(r, "DoorR", Vector3(0.42, 0.9, 0.04), Vector3(0.22, 0.1, 0.29), Color(0.82, 0.6, 0.4), 0.02)
+	box(r, "Handle", Vector3(0.04, 0.16, 0.04), Vector3(-0.05, 0.5, 0.33), Color(0.3, 0.2, 0.15), 0.01)
+	box(r, "Handle", Vector3(0.04, 0.16, 0.04), Vector3(0.05, 0.5, 0.33), Color(0.3, 0.2, 0.15), 0.01)
+	for i in 3:
+		box(r, "Jar", Vector3(0.2, 0.26, 0.2), Vector3(-0.28 + i * 0.28, 1.12, 0.12), Color(0.9, 0.85, 0.7), 0.04)
+		box(r, "JarLid", Vector3(0.22, 0.05, 0.22), Vector3(-0.28 + i * 0.28, 1.38, 0.12), Color(0.8, 0.3, 0.3), 0.02)
+	box(r, "PastaBox", Vector3(0.24, 0.3, 0.12), Vector3(0.0, 1.4, -0.1), Color(0.98, 0.83, 0.4), 0.03)
+
+
+static func _garden_bed(r: Node3D, size: Vector2, kind: String) -> void:
+	box(r, "Frame", Vector3(size.x, 0.22, size.y), Vector3.ZERO, Color(0.6, 0.42, 0.26), 0.04)
+	box(r, "Soil", Vector3(size.x - 0.12, 0.05, size.y - 0.12), Vector3(0, 0.2, 0), Color(0.33, 0.22, 0.16), 0.01)
+	var cols := 3
+	for i in cols:
+		for j in 2:
+			var px := (i - 1) * (size.x - 0.3) / 2.0
+			var pz := (j - 0.5) * (size.y - 0.3)
+			match kind:
+				"tomato":
+					box(r, "Plant", Vector3(0.22, 0.4, 0.22), Vector3(px, 0.22, pz), Color(0.3, 0.65, 0.3), 0.05)
+					box(r, "Tomato", Vector3(0.12, 0.12, 0.12), Vector3(px + 0.08, 0.42, pz + 0.08), Color(0.9, 0.2, 0.18), 0.03)
+					box(r, "Tomato", Vector3(0.1, 0.1, 0.1), Vector3(px - 0.07, 0.3, pz + 0.1), Color(0.92, 0.25, 0.2), 0.03)
+				"carrot":
+					box(r, "Tops", Vector3(0.22, 0.28, 0.22), Vector3(px, 0.22, pz), Color(0.35, 0.72, 0.3), 0.05)
+					box(r, "Carrot", Vector3(0.07, 0.07, 0.07), Vector3(px, 0.25, pz), Color(0.98, 0.55, 0.15), 0.02)
+				_:
+					box(r, "Leaf", Vector3(0.26, 0.3, 0.26), Vector3(px, 0.22, pz), Color(0.35, 0.78, 0.4), 0.07)
