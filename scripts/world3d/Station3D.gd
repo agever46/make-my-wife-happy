@@ -20,6 +20,8 @@ var _indicator: StationIndicator
 var _glow_tween: Tween
 var _bounce_tween: Tween
 var needed_only := false
+var hovered := false
+var _pick_size := Vector3(1, 1, 1)
 var _progress := 0.0
 var _progress_stamp := -100000
 
@@ -27,6 +29,7 @@ var _progress_stamp := -100000
 func setup(def: Dictionary) -> void:
 	station_id = def.get("id", &"")
 	needed_only = def.get("needed_only", false)
+	_pick_size = Vector3(def["size"].x, maxf(def.get("height", 1.0), 0.7), def["size"].y) + Vector3(0.3, 0.0, 0.3)
 	var size: Vector2 = def["size"]
 	var height: float = def.get("height", 1.0)
 	name = String(station_id) if station_id != &"" else String(def["model"])
@@ -53,6 +56,19 @@ func setup(def: Dictionary) -> void:
 		_rim.shader = RIM_SHADER
 		_rim.set_shader_parameter("strength", 0.0)
 		_apply_overlay(visual_root, _rim)
+
+
+## Box the mouse can click on (world space).
+func pick_aabb() -> AABB:
+	return AABB(global_position + Vector3(-_pick_size.x * 0.5, 0.0, -_pick_size.z * 0.5), _pick_size)
+
+
+## Mouse hover: a softer glow than the "player is here" highlight.
+func set_hover(on: bool) -> void:
+	if hovered == on:
+		return
+	hovered = on
+	_update_glow()
 
 
 func has_player(player: Node3D) -> bool:
@@ -133,10 +149,7 @@ func _on_body_exited(body: Node3D) -> void:
 
 
 func _set_highlight(on: bool) -> void:
-	if _glow_tween != null:
-		_glow_tween.kill()
-	_glow_tween = create_tween()
-	_glow_tween.tween_property(_rim, "shader_parameter/strength", 1.3 if on else 0.0, 0.2)
+	_update_glow()
 	if on:
 		if _bounce_tween != null:
 			_bounce_tween.kill()
@@ -144,3 +157,17 @@ func _set_highlight(on: bool) -> void:
 		_bounce_tween = create_tween()
 		_bounce_tween.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 		_bounce_tween.tween_property(visual_root, "scale", Vector3.ONE, 0.55)
+
+
+func _update_glow() -> void:
+	if _rim == null:
+		return
+	var target := 0.0
+	if not players_in_zone.is_empty():
+		target = 1.3
+	elif hovered:
+		target = 0.7
+	if _glow_tween != null:
+		_glow_tween.kill()
+	_glow_tween = create_tween()
+	_glow_tween.tween_property(_rim, "shader_parameter/strength", target, 0.2)

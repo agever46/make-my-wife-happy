@@ -12,5 +12,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			GameManager.pause_game()
 		elif GameManager.state == GameManager.GameState.PAUSED:
 			GameManager.resume_game()
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT \
+			and (GameManager.state == GameManager.GameState.GAME_OVER or GameManager.state == GameManager.GameState.VICTORY):
+		GameManager.start_game() # click anywhere on the result screen
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT \
+			and GameManager.state == GameManager.GameState.PAUSED and not DebugConsole.is_open():
+		GameManager.resume_game()
 	elif event.is_action_pressed("ui_accept") and (GameManager.state == GameManager.GameState.GAME_OVER or GameManager.state == GameManager.GameState.VICTORY):
 		GameManager.start_game()
