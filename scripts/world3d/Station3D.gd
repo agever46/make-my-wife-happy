@@ -20,6 +20,8 @@ var _indicator: StationIndicator
 var _glow_tween: Tween
 var _bounce_tween: Tween
 var needed_only := false
+## Height (m) of the station's task bubble; speech bubbles sit above it.
+var speech_height := 2.0
 var hovered := false
 var _pick_size := Vector3(1, 1, 1)
 var _progress := 0.0
@@ -50,7 +52,8 @@ func setup(def: Dictionary) -> void:
 		add_to_group("stations")
 		_add_zone(size, def.get("zone_margin", 0.85))
 		_indicator = StationIndicator.new()
-		_indicator.position = Vector3(0.0, def.get("bubble", height + 0.6), 0.0)
+		speech_height = def.get("bubble", height + 0.6)
+		_indicator.position = Vector3(0.0, speech_height, 0.0)
 		add_child(_indicator)
 		_rim = ShaderMaterial.new()
 		_rim.shader = RIM_SHADER
@@ -69,6 +72,15 @@ func set_hover(on: bool) -> void:
 		return
 	hovered = on
 	_update_glow()
+
+
+## Where this station's speech bubble points (relative to the station) and which way the bubble extends (-1 / 0 / +1).
+func speech_anchor() -> Vector3:
+	return Vector3(0.0, speech_height + 0.9, 0.0)
+
+
+func speech_side() -> float:
+	return 0.0
 
 
 func has_player(player: Node3D) -> bool:

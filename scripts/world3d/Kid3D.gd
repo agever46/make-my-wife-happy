@@ -249,3 +249,13 @@ func _show_plate() -> void:
 	PlaceholderFactory.box(_plate, "Sauce", Vector3(0.1, 0.04, 0.1), Vector3(0, 0.92, 0), Color(0.85, 0.28, 0.2), 0.02)
 	get_parent().add_child(_plate)
 	_plate.global_position = global_position + Vector3(0.0, 0.0, 0.55)
+
+
+## Mia's bubble extends to the left, Noah's to the right; higher while they stand (playing).
+func speech_anchor() -> Vector3:
+	var y := 1.55 if mode == Mode.PLAYING else 1.2
+	return Vector3(speech_side() * 0.5, y, 0.0)
+
+
+func speech_side() -> float:
+	return -1.0 if station_id == &"kid_a" else 1.0

@@ -20,6 +20,10 @@ func _ready() -> void:
 	items_root.add_to_group("item_root")
 	add_child(items_root)
 
+	var speech := SpeechController.new()
+	speech.name = "SpeechController"
+	add_child(speech)
+
 	var bus_event := BusEvent.new()
 	bus_event.name = "BusEvent"
 	add_child(bus_event)

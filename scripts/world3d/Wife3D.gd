@@ -41,3 +41,12 @@ func _process(delta: float) -> void:
 		visual_root.rotation.z = sin(_shake * 60.0) * _shake * 0.12
 	elif visual_root.rotation.z != 0.0:
 		visual_root.rotation.z = 0.0
+
+
+## Beside her head, to the right, so it stays below the top HUD and clear of her task icon.
+func speech_anchor() -> Vector3:
+	return Vector3(0.7, 1.45, 0.0)
+
+
+func speech_side() -> float:
+	return 1.0

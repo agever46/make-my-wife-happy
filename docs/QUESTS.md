@@ -69,3 +69,9 @@ coffee (machine -> fridge for milk -> wife), trash (trash can -> dumpster outsid
 
 ## Not done yet
 Sounds, debug console, second player, upgrades shop, more days/maps, walls/path art, Hebrew UI.
+
+## Speech bubbles
+Every new quest is *said* by someone: `SpeechController` (listens to `QuestManager.quest_added`) puts a `SpeechBubble` above the
+wife (all normal quests) or above the kid the quest belongs to (`QuestData.kid`): the quest title plus the item icon, popping in for
+about 4 s. Each speaker has one bubble at a time; Mia's extends to the left, Noah's to the right, the wife's to the right (see
+`speech_anchor()` / `speech_side()` in `Wife3D.gd` and `Kid3D.gd`). The speaker also does a small hop.
