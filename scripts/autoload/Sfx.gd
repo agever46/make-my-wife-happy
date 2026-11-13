@@ -96,7 +96,7 @@ func _on_happiness_changed(new_value: float, old_value: float) -> void:
 		play("wife_angry", -2.0)
 	var warn := GameManager.MAX_HAPPINESS * WARN_RATIO
 	if new_value < warn and old_value >= warn:
-		play("meter_warning")
+		play("meter_warning", -6.0)
 		_warn_clock = 0.0
 
 
@@ -105,7 +105,7 @@ func _on_tick(delta: float) -> void:
 		_warn_clock += delta
 		if _warn_clock >= WARN_EVERY:
 			_warn_clock = 0.0
-			play("meter_warning", -4.0)
+			play("meter_warning", -8.0)
 
 
 func _stream(id: String) -> AudioStream:
